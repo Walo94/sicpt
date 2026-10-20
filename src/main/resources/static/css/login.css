@@ -1,0 +1,291 @@
+/* ============================================
+   LOGIN - SICP HATS  (paleta de index.css)
+   ============================================ */
+:root {
+  --lg-blue-dark: #1e3a5f;
+  --lg-blue: #2c5f8a;
+  --lg-blue-light: #4a90c4;
+  --lg-blue-lighter: #d4e8f7;
+  --lg-green: #4caf50;
+  --lg-green-light: #81c784;
+  --lg-bg: #f0f6fb;
+  --lg-border: #b8d4e8;
+}
+
+.login-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      var(--lg-blue-lighter) 0,
+      transparent 45%
+    ),
+    radial-gradient(circle at 85% 85%, #e8f5e9 0, transparent 45%), var(--lg-bg);
+}
+
+/* ---------- Contenedor de dos paneles ---------- */
+.login-shell {
+  display: flex;
+  width: 100%;
+  max-width: 880px;
+  min-height: 520px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 14px 40px rgba(30, 58, 95, 0.25);
+}
+
+/* ---------- Panel de marca ---------- */
+.login-brand {
+  flex: 1.05;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centra verticalmente */
+  align-items: center; /* centra horizontalmente */
+  padding: 30px 32px;
+  color: #fff;
+  position: relative;
+  background: linear-gradient(
+    160deg,
+    var(--lg-blue-light) 0%,
+    var(--lg-blue) 50%,
+    var(--lg-blue-dark) 100%
+  );
+}
+
+/* Cuadrícula sutil tipo "plano" */
+.login-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.login-brand > * {
+  position: relative;
+}
+
+/* El logo superior se queda arriba pero sin afectar el centrado */
+.brand-top {
+  position: absolute;
+  top: 30px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-hat {
+  font-size: 1.5rem;
+  color: #fff;
+}
+.brand-company {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.brand-center {
+  text-align: center;
+}
+
+/* Logotipo SICP */
+.sicp-logo {
+  display: inline-flex;
+  gap: 8px;
+}
+.sicp-letter {
+  width: 58px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.7rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--lg-blue-dark);
+  background: linear-gradient(180deg, #ffffff 0%, var(--lg-blue-lighter) 100%);
+  border-radius: 8px;
+  border-bottom: 4px solid var(--lg-blue-light);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+.sicp-letter-accent {
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    var(--lg-green-light) 0%,
+    var(--lg-green) 100%
+  );
+  border-bottom-color: #388e3c;
+}
+.sicp-bar {
+  width: 120px;
+  height: 4px;
+  margin: 18px auto 12px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--lg-green) 0%,
+    var(--lg-green-light) 100%
+  );
+}
+.sicp-expansion {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.sicp-expansion b {
+  color: var(--lg-green-light);
+  font-size: 1rem;
+}
+
+.brand-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.78rem;
+}
+.brand-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+.brand-features i {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--lg-green-light);
+  font-size: 0.7rem;
+}
+
+/* ---------- Tarjeta / formulario ---------- */
+.login-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 36px 36px 20px;
+  background: #fff;
+}
+.login-heading h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--lg-blue-dark);
+  margin: 0 0 4px;
+}
+.login-heading p {
+  font-size: 0.8rem;
+  color: #6b8aa5;
+  margin: 0 0 22px;
+}
+
+.login-form .form-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--lg-blue-dark);
+  margin-bottom: 4px;
+}
+.login-form .input-group-text {
+  background: var(--lg-bg);
+  border-color: var(--lg-blue-lighter);
+  color: var(--lg-blue-light);
+}
+.login-form .form-control {
+  border-color: var(--lg-blue-lighter);
+  font-size: 0.9rem;
+}
+.login-form .form-control:focus {
+  border-color: var(--lg-blue-light);
+  box-shadow: 0 0 0 0.15rem rgba(74, 144, 196, 0.25);
+}
+.login-form .btn-outline-secondary {
+  border-color: var(--lg-blue-lighter);
+  color: var(--lg-blue-light);
+}
+.login-form .btn-outline-secondary:hover {
+  background: var(--lg-blue-lighter);
+  color: var(--lg-blue-dark);
+}
+
+.btn-login {
+  background: linear-gradient(
+    180deg,
+    var(--lg-green-light) 0%,
+    var(--lg-green) 100%
+  );
+  border: 1px solid #43a047;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 9px;
+}
+.btn-login:hover {
+  background: #43a047;
+  border-color: #388e3c;
+  color: #fff;
+}
+
+.login-footer {
+  text-align: center;
+  font-size: 0.7rem;
+  color: #9aaebf;
+  margin-top: 26px;
+}
+
+/* ---------- Páginas de error (reutilizan .login-card suelto) ---------- */
+.login-body > .login-card {
+  max-width: 400px;
+  width: 100%;
+  flex: none;
+  border-radius: 10px;
+  box-shadow: 0 14px 40px rgba(30, 58, 95, 0.25);
+  padding: 32px 28px 24px;
+}
+.login-logo {
+  font-size: 2.6rem;
+  color: var(--lg-blue-light);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .login-shell {
+    flex-direction: column;
+    min-height: 0;
+    max-width: 420px;
+  }
+  .login-brand {
+    padding: 22px;
+    gap: 16px;
+  }
+  .brand-features {
+    display: none;
+  }
+  .sicp-letter {
+    width: 46px;
+    height: 56px;
+    font-size: 2.1rem;
+  }
+  .sicp-expansion {
+    font-size: 0.72rem;
+  }
+  .login-card {
+    padding: 26px 22px 16px;
+  }
+}

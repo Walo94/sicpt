@@ -1,0 +1,106 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block
+      th:fragment="formulario"
+      th:with="urlPost=${form.id == null} ? @{/catalogos/unidades} : @{/catalogos/unidades/{id}(id=${form.id})}"
+    >
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title">
+          <i class="fas fa-ruler-combined me-2"></i>
+          <span th:text="${form.id == null} ? 'Nueva Unidad' : 'Editar Unidad'"
+            >Nueva Unidad</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+
+      <form
+        th:object="${form}"
+        th:attr="hx-post=${urlPost}"
+        hx-target="#modalContent"
+        hx-swap="innerHTML"
+        hx-include="#buscador, #estadoTabla"
+        novalidate
+        autocomplete="off"
+      >
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="codigo" class="form-label">
+                Código <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control text-uppercase"
+                th:field="*{codigo}"
+                th:errorclass="is-invalid"
+                maxlength="10"
+                placeholder="Ej. PAR"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('codigo')}"
+                th:errors="*{codigo}"
+              ></div>
+            </div>
+            <div class="col-md-8">
+              <label for="descripcion" class="form-label">
+                Descripción <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{descripcion}"
+                th:errorclass="is-invalid"
+                maxlength="50"
+                placeholder="Ej. Par, Pieza, Metro"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('descripcion')}"
+                th:errors="*{descripcion}"
+              ></div>
+            </div>
+            <div class="col-md-6">
+              <label for="claveSat" class="form-label">
+                Clave SAT <span class="text-muted small">(opcional)</span>
+              </label>
+              <input
+                type="text"
+                class="form-control text-uppercase"
+                th:field="*{claveSat}"
+                th:errorclass="is-invalid"
+                maxlength="10"
+                placeholder="Ej. PR, MTR, KG"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('claveSat')}"
+                th:errors="*{claveSat}"
+              ></div>
+              <div class="form-text">
+                <i class="fas fa-info-circle me-1"></i>
+                Clave oficial del SAT para facturación. Puede dejarse vacía.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-success btn-sm">
+            <i class="fas fa-save me-1"></i> Guardar
+          </button>
+        </div>
+      </form>
+    </th:block>
+  </body>
+</html>

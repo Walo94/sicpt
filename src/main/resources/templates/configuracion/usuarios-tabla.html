@@ -1,0 +1,86 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block th:fragment="tabla">
+      <div id="estadoTabla" hidden>
+        <input type="hidden" name="page" th:value="${pagina.number}" />
+        <input type="hidden" name="sort" th:value="${sort}" />
+        <input type="hidden" name="dir" th:value="${dir}" />
+      </div>
+
+      <div class="text-muted small mb-1 text-end">
+        <i class="fas fa-info-circle"></i>
+        <span th:text="${pagina.totalElements}">0</span> registros
+      </div>
+
+      <div class="table-responsive catalogos-tabla-wrapper">
+        <table class="table table-sm table-hover catalogos-tabla mb-0">
+          <thead>
+            <tr>
+              <th
+                th:replace="~{fragments/sort-th :: th('#', 'id', '70px')}"
+              ></th>
+              <th
+                th:replace="~{fragments/sort-th :: th('Estatus', 'estatus', '100px')}"
+              ></th>
+              <th
+                th:replace="~{fragments/sort-th :: th('Usuario', 'username', null)}"
+              ></th>
+              <th
+                th:replace="~{fragments/sort-th :: th('Nombre', 'nombre', null)}"
+              ></th>
+              <th>Correo</th>
+              <th>Roles</th>
+              <th
+                th:replace="~{fragments/sort-th :: th('Último acceso', 'ultimoAcceso', '150px')}"
+              ></th>
+            </tr>
+          </thead>
+          <tbody id="tablaBody">
+            <tr
+              th:each="u : ${pagina.content}"
+              th:attr="data-id=${u.id},data-estatus=${u.estatus}"
+            >
+              <td th:text="${u.id}"></td>
+              <td>
+                <span
+                  class="badge-estatus"
+                  th:classappend="${u.activo} ? 'badge-activo' : 'badge-inactivo'"
+                  th:text="${u.activo} ? 'Activo' : 'Inactivo'"
+                ></span>
+              </td>
+              <td>
+                <strong th:text="${u.username}"></strong>
+                <span
+                  class="badge text-bg-info ms-1"
+                  th:if="${usuarioActual != null and usuarioActual.id == u.id}"
+                  >tú</span
+                >
+              </td>
+              <td th:text="${u.nombreCompleto}"></td>
+              <td th:text="${u.email}"></td>
+              <td>
+                <span
+                  class="badge text-bg-primary me-1"
+                  th:each="r : ${u.roles}"
+                  th:text="${r.nombre}"
+                ></span>
+              </td>
+              <td class="text-muted" th:text="${u.ultimoAccesoTexto}"></td>
+            </tr>
+            <tr th:if="${pagina.empty}">
+              <td colspan="7" class="text-center text-muted py-4">
+                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                No se encontraron registros
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        th:replace="~{fragments/paginador :: paginador(${pagina}, ${baseUrl}, ${qsSort}, '#tablaContainer')}"
+      ></div>
+    </th:block>
+  </body>
+</html>

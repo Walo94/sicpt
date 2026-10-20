@@ -1,0 +1,80 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <!--
+      Paginador reutilizable (HTMX).
+      Uso: <div th:replace="~{fragments/paginador :: paginador(${pagina}, ${baseUrl}, ${qsSort}, '#tablaContainer')}"></div>
+        pagina = org.springframework.data.domain.Page
+        url    = ruta del listado          qs = query string SIN page (q=..&sort=..&dir=..)
+        target = selector que se reemplaza
+    -->
+    <div
+      th:fragment="paginador(pagina, url, qs, target)"
+      class="d-flex justify-content-between align-items-center mt-2"
+    >
+      <div
+        class="text-muted small"
+        th:if="${pagina.totalElements > 0}"
+        th:text="|Mostrando ${pagina.number * pagina.size + 1} - ${pagina.number * pagina.size + pagina.numberOfElements} de ${pagina.totalElements}|"
+      ></div>
+      <div th:unless="${pagina.totalElements > 0}"></div>
+
+      <nav aria-label="Paginación" th:if="${pagina.totalPages > 1}">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" th:classappend="${pagina.first} ? 'disabled'">
+            <a
+              class="page-link"
+              href="#"
+              hx-swap="innerHTML"
+              th:attr="hx-get=${url + '?' + qs + '&page=0'},hx-target=${target}"
+              ><i class="fas fa-angle-double-left"></i
+            ></a>
+          </li>
+          <li class="page-item" th:classappend="${pagina.first} ? 'disabled'">
+            <a
+              class="page-link"
+              href="#"
+              hx-swap="innerHTML"
+              th:attr="hx-get=${url + '?' + qs + '&page=' + (pagina.number - 1)},hx-target=${target}"
+              ><i class="fas fa-angle-left"></i
+            ></a>
+          </li>
+
+          <li
+            class="page-item"
+            th:each="i : ${#numbers.sequence(0, pagina.totalPages - 1)}"
+            th:if="${i >= pagina.number - 2 and i <= pagina.number + 2}"
+            th:classappend="${i == pagina.number} ? 'active'"
+          >
+            <a
+              class="page-link"
+              href="#"
+              hx-swap="innerHTML"
+              th:text="${i + 1}"
+              th:attr="hx-get=${url + '?' + qs + '&page=' + i},hx-target=${target}"
+            ></a>
+          </li>
+
+          <li class="page-item" th:classappend="${pagina.last} ? 'disabled'">
+            <a
+              class="page-link"
+              href="#"
+              hx-swap="innerHTML"
+              th:attr="hx-get=${url + '?' + qs + '&page=' + (pagina.number + 1)},hx-target=${target}"
+              ><i class="fas fa-angle-right"></i
+            ></a>
+          </li>
+          <li class="page-item" th:classappend="${pagina.last} ? 'disabled'">
+            <a
+              class="page-link"
+              href="#"
+              hx-swap="innerHTML"
+              th:attr="hx-get=${url + '?' + qs + '&page=' + (pagina.totalPages - 1)},hx-target=${target}"
+              ><i class="fas fa-angle-double-right"></i
+            ></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </body>
+</html>

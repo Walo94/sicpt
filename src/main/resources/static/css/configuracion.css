@@ -1,0 +1,156 @@
+/* ============================================
+   CONFIGURACIÓN: usuarios, roles y auditoría
+   ============================================ */
+
+/* ----- Selector de roles (formulario de usuario) ----- */
+.roles-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #d4e8f7;
+  border-radius: 4px;
+}
+.roles-lista.is-invalid {
+  border-color: #dc3545;
+}
+.rol-check {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 6px 8px;
+  border: 1px solid #e8eef4;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: #1e3a5f;
+}
+.rol-check:hover {
+  background: #e8f5e9;
+}
+.rol-check input {
+  margin-top: 3px;
+}
+
+/* ----- Matriz de permisos (formulario de rol) ----- */
+.permisos-matriz {
+  border: 1px solid #d4e8f7;
+  border-radius: 4px;
+  background: #fff;
+}
+.permisos-modulo + .permisos-modulo {
+  border-top: 2px solid #d4e8f7;
+}
+.permisos-modulo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  background: linear-gradient(180deg, #eaf4fb 0%, #d4e8f7 100%);
+  color: #1e3a5f;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.permisos-rapidos {
+  font-weight: 400;
+  text-transform: none;
+}
+.permisos-rapidos .btn-link,
+[data-permisos-todos-global],
+[data-permisos-ninguno-global] {
+  font-size: 0.72rem;
+  text-decoration: none;
+}
+.permisos-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px;
+  border-bottom: 1px solid #f0f4f8;
+  font-size: 0.78rem;
+}
+.permisos-fila:hover {
+  background: #f7fbff;
+}
+.permisos-sub {
+  flex: 0 0 170px;
+  font-weight: 600;
+  color: #1e3a5f;
+  text-transform: capitalize;
+}
+.permisos-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.permisos-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: #455a64;
+  text-transform: capitalize;
+}
+
+/* ----- Auditoría ----- */
+.auditoria-wrapper {
+  max-height: 560px;
+}
+.auditoria-tabla td {
+  font-size: 0.76rem;
+}
+.auditoria-detalle {
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.badge-accion {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.66rem;
+  font-weight: 600;
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #bbdefb;
+}
+.badge-accion[data-accion="LOGIN"],
+.badge-accion[data-accion="CREAR"] {
+  background: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+.badge-accion[data-accion="LOGOUT"] {
+  background: #eceff1;
+  color: #455a64;
+  border-color: #cfd8dc;
+}
+.badge-accion[data-accion="LOGIN_FALLIDO"] {
+  background: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+.badge-accion[data-accion="EDITAR"] {
+  background: #fff3cd;
+  color: #856404;
+  border-color: #ffeeba;
+}
+.badge-accion[data-accion="ESTATUS"] {
+  background: #e1bee7;
+  color: #4a148c;
+  border-color: #ce93d8;
+}
+
+/* Modal con scroll interno (roles) */
+.modal-dialog-scrollable .modal-content form {
+  min-height: 0;
+}
+.modal-dialog-scrollable .modal-body {
+  overflow-y: auto;
+}

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <th:block
+      th:replace="~{fragments/head :: headComun('Auditoría')}"
+    ></th:block>
+    <link rel="stylesheet" th:href="@{/css/configuracion.css}" />
+  </head>
+  <body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid mt-3 px-4">
+      <div class="catalogos-header">
+        <h2 class="catalogos-title">
+          <i class="fas fa-clipboard-check text-primary me-2"></i> Bitácora de
+          Auditoría
+        </h2>
+      </div>
+
+      <!-- Filtros: se aplican solos al escribir / cambiar -->
+      <form
+        id="filtros"
+        class="catalogos-toolbar flex-wrap"
+        th:attr="hx-get=@{/configuracion/auditoria}"
+        hx-trigger="input changed delay:300ms, change"
+        hx-target="#tablaContainer"
+        hx-swap="innerHTML"
+        hx-sync="this:replace"
+        onsubmit="return false;"
+      >
+        <div class="input-group input-group-sm" style="max-width: 300px">
+          <span class="input-group-text bg-white"
+            ><i class="fas fa-search text-muted"></i
+          ></span>
+          <input
+            type="search"
+            class="form-control"
+            name="q"
+            th:value="${q}"
+            placeholder="Usuario, entidad o detalle..."
+            autocomplete="off"
+          />
+        </div>
+        <select
+          class="form-select form-select-sm"
+          name="accion"
+          style="max-width: 180px"
+        >
+          <option value="">Todas las acciones</option>
+          <option
+            th:each="a : ${acciones}"
+            th:value="${a}"
+            th:text="${a}"
+            th:selected="${a == accion}"
+          ></option>
+        </select>
+        <div class="input-group input-group-sm" style="max-width: 190px">
+          <span class="input-group-text">Desde</span>
+          <input
+            type="date"
+            class="form-control"
+            name="desde"
+            th:value="${desde}"
+          />
+        </div>
+        <div class="input-group input-group-sm" style="max-width: 190px">
+          <span class="input-group-text">Hasta</span>
+          <input
+            type="date"
+            class="form-control"
+            name="hasta"
+            th:value="${hasta}"
+          />
+        </div>
+        <a
+          class="btn btn-outline-secondary btn-sm"
+          th:href="@{/configuracion/auditoria}"
+        >
+          <i class="fas fa-eraser me-1"></i> Limpiar
+        </a>
+      </form>
+
+      <div id="tablaContainer">
+        <th:block
+          th:replace="~{configuracion/auditoria-tabla :: tabla}"
+        ></th:block>
+      </div>
+    </div>
+
+    <th:block th:replace="~{fragments/scripts-base :: scriptsBase}"></th:block>
+  </body>
+</html>

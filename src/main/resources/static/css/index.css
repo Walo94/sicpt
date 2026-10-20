@@ -1,0 +1,421 @@
+/* ============================================
+   CINTA DE OPCIONES (RIBBON) - SICP HATS
+   Paleta: Azules claros y verdes claros
+   ============================================ */
+
+:root {
+  --ribbon-blue-dark: #1e3a5f;
+  --ribbon-blue: #2c5f8a;
+  --ribbon-blue-light: #4a90c4;
+  --ribbon-blue-lighter: #d4e8f7;
+  --ribbon-green: #4caf50;
+  --ribbon-green-light: #81c784;
+  --ribbon-green-lighter: #e8f5e9;
+  --ribbon-bg: #f0f6fb;
+  --ribbon-border: #b8d4e8;
+  --ribbon-text: #1e3a5f;
+}
+
+/* Contenedor principal */
+.ribbon-container {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  width: 100%;
+  background-color: var(--ribbon-bg);
+  border-bottom: 2px solid var(--ribbon-blue-light);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  transition:
+    border-bottom-width 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* ====== BARRA DE TÍTULO ====== */
+.ribbon-titlebar {
+  background: linear-gradient(
+    180deg,
+    var(--ribbon-blue-light) 0%,
+    var(--ribbon-blue) 100%
+  );
+  color: #ffffff;
+  padding: 6px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--ribbon-blue-dark);
+}
+
+.ribbon-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ribbon-titlebar-icon {
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+.ribbon-titlebar-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.ribbon-titlebar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botón toggle submenús */
+.ribbon-toggle-submenus {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ribbon-toggle-submenus:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.ribbon-toggle-submenus:active {
+  transform: scale(0.95);
+}
+
+.ribbon-toggle-submenus i {
+  transition: transform 0.3s ease;
+}
+
+.ribbon-container.collapsed .ribbon-toggle-submenus i {
+  transform: rotate(180deg);
+}
+
+/* ====== PESTAÑAS ====== */
+.ribbon-tabs {
+  background-color: var(--ribbon-blue-dark);
+  border-bottom: none;
+  padding: 0 8px;
+  margin-bottom: 0;
+}
+
+.ribbon-tabs .nav-link {
+  color: #cfe4f5;
+  border: none;
+  border-radius: 0;
+  padding: 6px 18px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  position: relative;
+  top: 1px;
+}
+
+.ribbon-tabs .nav-link:hover {
+  color: #ffffff;
+  background-color: var(--ribbon-blue);
+}
+
+.ribbon-tabs .nav-link.active {
+  color: var(--ribbon-blue-dark);
+  background-color: var(--ribbon-bg);
+  border-top: 3px solid var(--ribbon-green);
+  font-weight: 600;
+}
+
+/* ====== CONTENIDO DE LA CINTA (con colapso) ====== */
+.ribbon-content {
+  background-color: var(--ribbon-bg);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ribbon-border);
+  overflow: hidden;
+  max-height: 400px;
+  opacity: 1;
+  transition:
+    max-height 0.35s ease,
+    padding 0.35s ease,
+    opacity 0.25s ease,
+    border-bottom-width 0.35s ease;
+}
+
+/* Estado colapsado */
+.ribbon-container.collapsed .ribbon-content {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  border-bottom-width: 0;
+}
+
+/* Borde y sombra del contenedor también desaparecen al colapsar */
+.ribbon-container.collapsed {
+  border-bottom-width: 0;
+  box-shadow: none;
+}
+
+.ribbon-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  align-items: stretch;
+}
+
+/* Grupo de botones */
+.ribbon-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 12px;
+  border-right: 1px solid var(--ribbon-border);
+  min-width: 80px;
+}
+
+.ribbon-group:last-child {
+  border-right: none;
+}
+
+.ribbon-group-items {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.ribbon-group-label {
+  font-size: 0.65rem;
+  color: #6b8aa5;
+  text-align: center;
+  margin-top: 6px;
+  padding-top: 4px;
+  width: 100%;
+  border-top: 1px solid var(--ribbon-border);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Botón individual de la cinta */
+.ribbon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-decoration: none;
+  color: var(--ribbon-text);
+  padding: 6px 8px;
+  border-radius: 4px;
+  min-width: 70px;
+  max-width: 90px;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  text-align: center;
+}
+
+.ribbon-btn:hover {
+  background-color: var(--ribbon-blue-lighter);
+  border-color: var(--ribbon-blue-light);
+  color: var(--ribbon-blue-dark);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ribbon-btn:active {
+  transform: translateY(0);
+  background-color: var(--ribbon-blue-light);
+}
+
+.ribbon-btn i {
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+  transition: transform 0.15s;
+}
+
+.ribbon-btn:hover i {
+  transform: scale(1.1);
+}
+
+.ribbon-btn span {
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.1;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* Botón activo (marcado por JS según URL) */
+.ribbon-btn-active {
+  background-color: var(--ribbon-blue-lighter) !important;
+  border-color: var(--ribbon-blue-light) !important;
+  box-shadow: inset 0 0 0 1px var(--ribbon-blue-light);
+}
+
+/* ====== COLORES DE ICONOS ====== */
+.ribbon-icon-blue {
+  color: #4a90c4;
+}
+.ribbon-icon-green {
+  color: #4caf50;
+}
+.ribbon-icon-yellow {
+  color: #f4b400;
+}
+.ribbon-icon-orange {
+  color: #f57c00;
+}
+.ribbon-icon-gray {
+  color: #78909c;
+}
+.ribbon-icon-cyan {
+  color: #26c6da;
+}
+.ribbon-icon-dark {
+  color: #455a64;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 992px) {
+  .ribbon-group {
+    padding: 0 6px;
+  }
+  .ribbon-btn {
+    min-width: 60px;
+    padding: 4px;
+  }
+  .ribbon-btn i {
+    font-size: 1.3rem;
+  }
+  .ribbon-btn span {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .ribbon-titlebar-text {
+    font-size: 0.7rem;
+  }
+  .ribbon-tabs .nav-link {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+  .ribbon-group {
+    border-right: none;
+    border-bottom: 1px solid var(--ribbon-border);
+    width: 100%;
+    padding: 6px 0;
+  }
+  .ribbon-group-items {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* ====== USUARIO LOGUEADO EN LA BARRA DE TÍTULO ====== */
+.ribbon-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ribbon-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.ribbon-user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  text-align: right;
+}
+.ribbon-user-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.ribbon-user-role {
+  font-size: 0.62rem;
+  opacity: 0.85;
+}
+.ribbon-logout-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ribbon-logout-btn:hover {
+  background: #e53935;
+  border-color: #e53935;
+}
+
+/* ====== TARJETAS DE MÓDULOS (HOME) ====== */
+.modulo-card {
+  display: block;
+  height: 100%;
+  padding: 16px;
+  text-align: center;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #d4e8f7;
+  border-radius: 6px;
+  color: #1e3a5f;
+  transition: all 0.15s;
+}
+.modulo-card:hover {
+  border-color: #4a90c4;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  color: #1e3a5f;
+}
+.modulo-card > i {
+  font-size: 1.9rem;
+  color: #4a90c4;
+  margin-bottom: 8px;
+}
+.modulo-card-titulo {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.modulo-card-desc {
+  font-size: 0.72rem;
+  color: #6b8aa5;
+  margin: 4px 0 6px;
+}
+.modulo-card-pendiente {
+  opacity: 0.65;
+  cursor: default;
+}
+.modulo-card-pendiente:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: #d4e8f7;
+}
+
+/* Botones de la cinta cuya pantalla aún no existe */
+.ribbon-btn-pendiente {
+  opacity: 0.55;
+  cursor: default;
+}
+.ribbon-btn-pendiente:hover {
+  transform: none;
+  box-shadow: none;
+  background-color: transparent;
+  border-color: transparent;
+}

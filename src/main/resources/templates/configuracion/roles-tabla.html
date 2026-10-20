@@ -1,0 +1,74 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block th:fragment="tabla">
+      <div id="estadoTabla" hidden>
+        <input type="hidden" name="page" th:value="${pagina.number}" />
+        <input type="hidden" name="sort" th:value="${sort}" />
+        <input type="hidden" name="dir" th:value="${dir}" />
+      </div>
+
+      <div class="text-muted small mb-1 text-end">
+        <i class="fas fa-info-circle"></i>
+        <span th:text="${pagina.totalElements}">0</span> registros
+      </div>
+
+      <div class="table-responsive catalogos-tabla-wrapper">
+        <table class="table table-sm table-hover catalogos-tabla mb-0">
+          <thead>
+            <tr>
+              <th
+                th:replace="~{fragments/sort-th :: th('#', 'id', '70px')}"
+              ></th>
+              <th
+                th:replace="~{fragments/sort-th :: th('Estatus', 'estatus', '100px')}"
+              ></th>
+              <th
+                th:replace="~{fragments/sort-th :: th('Código', 'codigo', '180px')}"
+              ></th>
+              <th
+                th:replace="~{fragments/sort-th :: th('Nombre', 'nombre', null)}"
+              ></th>
+              <th>Descripción</th>
+              <th style="width: 110px">Permisos</th>
+            </tr>
+          </thead>
+          <tbody id="tablaBody">
+            <tr
+              th:each="r : ${pagina.content}"
+              th:attr="data-id=${r.id},data-estatus=${r.estatus}"
+            >
+              <td th:text="${r.id}"></td>
+              <td>
+                <span
+                  class="badge-estatus"
+                  th:classappend="${r.activo} ? 'badge-activo' : 'badge-inactivo'"
+                  th:text="${r.activo} ? 'Activo' : 'Inactivo'"
+                ></span>
+              </td>
+              <td><code th:text="${r.codigo}"></code></td>
+              <td th:text="${r.nombre}"></td>
+              <td class="text-muted" th:text="${r.descripcion}"></td>
+              <td>
+                <span
+                  class="badge text-bg-secondary"
+                  th:text="${r.permisos.size()}"
+                ></span>
+              </td>
+            </tr>
+            <tr th:if="${pagina.empty}">
+              <td colspan="6" class="text-center text-muted py-4">
+                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                No se encontraron registros
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        th:replace="~{fragments/paginador :: paginador(${pagina}, ${baseUrl}, ${qsSort}, '#tablaContainer')}"
+      ></div>
+    </th:block>
+  </body>
+</html>
