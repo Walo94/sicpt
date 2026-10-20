@@ -1,0 +1,152 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block th:fragment="formulario">
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title">
+          <i class="fas fa-cubes me-2"></i>
+          <span th:text="${form.id == null} ? 'Nueva Horma' : 'Editar Horma'">Nueva Horma</span>
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+
+      <form
+        th:object="${form}"
+        th:attr="hx-post=${form.id == null} ? @{/diseno/hormas} : @{/diseno/hormas/{id}(id=${form.id})}"
+        hx-target="#modalContent"
+        hx-swap="innerHTML"
+        hx-include="#buscador, #estadoTabla"
+        novalidate
+        autocomplete="off"
+        id="formHorma"
+      >
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="claveHorma" class="form-label">
+                Clave <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control text-uppercase"
+                th:field="*{claveHorma}"
+                th:errorclass="is-invalid"
+                maxlength="50"
+                placeholder="Ej. H-5100"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('claveHorma')}"
+                th:errors="*{claveHorma}"
+              ></div>
+            </div>
+            <div class="col-md-8">
+              <label for="descripcion" class="form-label">
+                Descripción <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{descripcion}"
+                th:errorclass="is-invalid"
+                maxlength="100"
+                placeholder="Ej. Horma Tenis Skate"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('descripcion')}"
+                th:errors="*{descripcion}"
+              ></div>
+            </div>
+
+            <!-- Combo con búsqueda de tallas activas -->
+            <div class="col-md-6">
+              <label for="tallaBuscar" class="form-label">
+                Talla (rango) <span class="text-danger">*</span>
+              </label>
+              <div class="talla-combo" id="tallaCombo">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="tallaBuscar"
+                  placeholder="Buscar talla..."
+                  autocomplete="off"
+                  th:value="${form.tallaEscalaTexto}"
+                />
+                <input
+                  type="hidden"
+                  th:field="*{tallaEscalaId}"
+                  id="tallaEscalaId"
+                />
+                <div class="talla-combo-dropdown" id="tallaDropdown"></div>
+              </div>
+              <div
+                class="invalid-feedback d-block"
+                th:if="${#fields.hasErrors('tallaEscalaId')}"
+                th:errors="*{tallaEscalaId}"
+              ></div>
+              <div class="form-text">
+                <i class="fas fa-info-circle me-1"></i>
+                Solo se muestran tallas activas.
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label for="puntoBase" class="form-label">
+                Punto base <span class="text-danger">*</span>
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                th:field="*{puntoBase}"
+                th:errorclass="is-invalid"
+                step="0.5"
+                min="0"
+                placeholder="Ej. 24.0"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('puntoBase')}"
+                th:errors="*{puntoBase}"
+              ></div>
+            </div>
+
+            <div class="col-md-3">
+              <label for="alturaTaconMm" class="form-label">
+                Tacón (mm) <span class="text-danger">*</span>
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                th:field="*{alturaTaconMm}"
+                th:errorclass="is-invalid"
+                step="1"
+                min="0"
+                placeholder="Ej. 30"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('alturaTaconMm')}"
+                th:errors="*{alturaTaconMm}"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-success btn-sm">
+            <i class="fas fa-save me-1"></i> Guardar
+          </button>
+        </div>
+      </form>
+    </th:block>
+  </body>
+</html>

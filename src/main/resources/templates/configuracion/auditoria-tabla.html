@@ -1,0 +1,62 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block th:fragment="tabla">
+      <div class="text-muted small mb-1 text-end">
+        <i class="fas fa-info-circle"></i>
+        <span th:text="${pagina.totalElements}">0</span> registros
+      </div>
+
+      <div class="table-responsive catalogos-tabla-wrapper auditoria-wrapper">
+        <table
+          class="table table-sm table-hover catalogos-tabla mb-0 auditoria-tabla"
+        >
+          <thead>
+            <tr>
+              <th style="width: 150px">Fecha</th>
+              <th style="width: 130px">Usuario</th>
+              <th style="width: 130px">Acción</th>
+              <th style="width: 110px">Módulo</th>
+              <th style="width: 110px">Entidad</th>
+              <th style="width: 70px">ID</th>
+              <th>Detalle</th>
+              <th style="width: 120px">IP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="a : ${pagina.content}">
+              <td class="text-nowrap" th:text="${a.fechaTexto}"></td>
+              <td th:text="${a.username}"></td>
+              <td>
+                <span
+                  class="badge-accion"
+                  th:attr="data-accion=${a.accion}"
+                  th:text="${a.accion}"
+                ></span>
+              </td>
+              <td th:text="${a.modulo}"></td>
+              <td th:text="${a.entidad}"></td>
+              <td th:text="${a.entidadId}"></td>
+              <td
+                class="auditoria-detalle"
+                th:text="${a.detalle}"
+                th:title="${a.detalle}"
+              ></td>
+              <td class="text-muted" th:text="${a.ip}"></td>
+            </tr>
+            <tr th:if="${pagina.empty}">
+              <td colspan="8" class="text-center text-muted py-4">
+                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                No se encontraron registros
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        th:replace="~{fragments/paginador :: paginador(${pagina}, ${baseUrl}, ${qs}, '#tablaContainer')}"
+      ></div>
+    </th:block>
+  </body>
+</html>

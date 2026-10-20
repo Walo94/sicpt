@@ -1,0 +1,23 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <!--
+      Encabezado de columna ordenable (HTMX).
+      Uso: <th th:replace="~{fragments/sort-th :: th('Usuario', 'username', null)}"></th>
+      Requiere en el modelo: baseUrl, qsQ, sort, dir (los pone ListadoHelper.cargar)
+    -->
+    <th
+      th:fragment="th(label, campo, ancho)"
+      class="sortable"
+      hx-target="#tablaContainer"
+      hx-swap="innerHTML"
+      th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=' + campo + '&dir=' + (sort == campo and dir == 'asc' ? 'desc' : 'asc')},style=${ancho != null ? 'width:' + ancho : null}"
+    >
+      <span th:text="${label}"></span>
+      <i
+        class="fas sort-icon"
+        th:classappend="${sort == campo} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"
+      ></i>
+    </th>
+  </body>
+</html>

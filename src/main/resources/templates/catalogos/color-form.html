@@ -1,0 +1,130 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block
+      th:fragment="formulario"
+      th:with="urlPost=${form.id == null} ? @{/catalogos/colores} : @{/catalogos/colores/{id}(id=${form.id})}"
+    >
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title">
+          <i class="fas fa-palette me-2"></i>
+          <span th:text="${form.id == null} ? 'Nuevo Color' : 'Editar Color'"
+            >Nuevo Color</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+
+      <form
+        th:object="${form}"
+        th:attr="hx-post=${urlPost}"
+        hx-target="#modalContent"
+        hx-swap="innerHTML"
+        hx-include="#buscador, #estadoTabla"
+        novalidate
+        autocomplete="off"
+        id="formColor"
+      >
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="descripcion" class="form-label">
+              Descripción <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              th:field="*{descripcion}"
+              th:errorclass="is-invalid"
+              maxlength="100"
+              placeholder="Ej. Negro / Marrón"
+            />
+            <div
+              class="invalid-feedback"
+              th:if="${#fields.hasErrors('descripcion')}"
+              th:errors="*{descripcion}"
+            ></div>
+          </div>
+
+          <div class="mb-2">
+            <label
+              class="form-label d-flex justify-content-between align-items-center"
+            >
+              <span
+                >Colores <span class="text-muted small">(opcional)</span></span
+              >
+              <span class="small text-muted">Máx. 5 colores</span>
+            </label>
+
+            <!-- Lista de colores agregados -->
+            <div id="listaColores" class="color-list mb-2"></div>
+
+            <!-- Selector para agregar un color -->
+            <div class="color-picker-row">
+              <input
+                type="text"
+                id="colorNombre"
+                class="form-control form-control-sm"
+                placeholder="Nombre (ej. Negro)"
+                maxlength="40"
+                style="max-width: 180px"
+              />
+              <input
+                type="color"
+                id="colorHex"
+                class="form-control form-control-color form-control-sm"
+                value="#000000"
+                title="Elegir color"
+              />
+              <input
+                type="text"
+                id="colorHexText"
+                class="form-control form-control-sm text-uppercase"
+                value="#000000"
+                maxlength="7"
+                pattern="^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"
+                style="max-width: 110px"
+              />
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-success"
+                id="btnAgregarColor"
+              >
+                <i class="fas fa-plus"></i> Agregar
+              </button>
+            </div>
+
+            <!-- Input oculto que se envía al servidor -->
+            <input type="hidden" id="colorJson" th:field="*{colorJson}" />
+            <div
+              class="invalid-feedback d-block"
+              th:if="${#fields.hasErrors('colorJson')}"
+              th:errors="*{colorJson}"
+            ></div>
+            <div class="form-text">
+              Puedes agregar varios colores para combinaciones (ej. Negro /
+              Marrón).
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            data-bs-dismiss="modal"
+          >
+            <i class="fas fa-times me-1"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-success btn-sm">
+            <i class="fas fa-save me-1"></i> Guardar
+          </button>
+        </div>
+      </form>
+    </th:block>
+  </body>
+</html>

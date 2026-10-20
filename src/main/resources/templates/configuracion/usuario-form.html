@@ -1,0 +1,218 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block
+      th:fragment="formulario"
+      th:with="urlPost=${form.id == null} ? @{/configuracion/usuarios} : @{/configuracion/usuarios/{id}(id=${form.id})}"
+    >
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title">
+          <i class="fas fa-user-cog me-2"></i>
+          <span
+            th:text="${form.id == null} ? 'Nuevo Usuario' : 'Editar Usuario'"
+            >Nuevo Usuario</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+
+      <form
+        th:object="${form}"
+        th:attr="hx-post=${urlPost}"
+        hx-target="#modalContent"
+        hx-swap="innerHTML"
+        hx-include="#buscador, #estadoTabla"
+        novalidate
+        autocomplete="off"
+      >
+        <div class="modal-body">
+          <div
+            class="alert alert-danger py-2 small"
+            th:if="${#fields.hasGlobalErrors()}"
+          >
+            <div th:each="e : ${#fields.globalErrors()}" th:text="${e}"></div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="username" class="form-label"
+                >Usuario <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{username}"
+                th:errorclass="is-invalid"
+                th:readonly="${form.id != null}"
+                maxlength="50"
+                placeholder="Ej. jperez"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('username')}"
+                th:errors="*{username}"
+              ></div>
+              <div class="form-text" th:if="${form.id != null}">
+                El usuario no se puede cambiar.
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">Correo</label>
+              <input
+                type="email"
+                class="form-control"
+                th:field="*{email}"
+                th:errorclass="is-invalid"
+                maxlength="120"
+                placeholder="correo@empresa.com"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('email')}"
+                th:errors="*{email}"
+              ></div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="nombre" class="form-label"
+                >Nombre <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{nombre}"
+                th:errorclass="is-invalid"
+                maxlength="80"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('nombre')}"
+                th:errors="*{nombre}"
+              ></div>
+            </div>
+            <div class="col-md-6">
+              <label for="apellidos" class="form-label">Apellidos</label>
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{apellidos}"
+                th:errorclass="is-invalid"
+                maxlength="100"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('apellidos')}"
+                th:errors="*{apellidos}"
+              ></div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="password" class="form-label">
+                Contraseña
+                <span class="text-danger" th:if="${form.id == null}">*</span>
+              </label>
+              <div class="input-group">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  maxlength="72"
+                  autocomplete="new-password"
+                  th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  data-toggle-password
+                  tabindex="-1"
+                >
+                  <i class="fas fa-eye"></i>
+                </button>
+                <div
+                  class="invalid-feedback"
+                  th:if="${#fields.hasErrors('password')}"
+                  th:errors="*{password}"
+                ></div>
+              </div>
+              <div
+                class="form-text"
+                th:text="${form.id == null} ? 'Mínimo 8 caracteres.' : 'Déjala vacía para conservar la actual.'"
+              ></div>
+            </div>
+            <div class="col-md-6">
+              <label for="confirmar" class="form-label"
+                >Confirmar contraseña</label
+              >
+              <input
+                type="password"
+                class="form-control"
+                id="confirmar"
+                name="confirmar"
+                maxlength="72"
+                autocomplete="new-password"
+                th:classappend="${#fields.hasErrors('confirmar')} ? 'is-invalid'"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('confirmar')}"
+                th:errors="*{confirmar}"
+              ></div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label"
+                >Roles <span class="text-danger">*</span></label
+              >
+              <div
+                class="roles-lista"
+                th:classappend="${#fields.hasErrors('rolIds')} ? 'is-invalid'"
+              >
+                <label class="rol-check" th:each="r : ${roles}">
+                  <input
+                    type="checkbox"
+                    name="rolIds"
+                    th:value="${r.id}"
+                    th:checked="${form.rolIds != null and form.rolIds.contains(r.id)}"
+                  />
+                  <span>
+                    <strong th:text="${r.nombre}"></strong>
+                    <small
+                      class="text-muted d-block"
+                      th:text="${r.descripcion}"
+                    ></small>
+                    <small class="text-danger" th:unless="${r.activo}"
+                      >(de baja)</small
+                    >
+                  </span>
+                </label>
+              </div>
+              <div
+                class="text-danger small mt-1"
+                th:if="${#fields.hasErrors('rolIds')}"
+                th:errors="*{rolIds}"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            data-bs-dismiss="modal"
+          >
+            <i class="fas fa-times me-1"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-success btn-sm">
+            <i class="fas fa-save me-1"></i> Guardar
+          </button>
+        </div>
+      </form>
+    </th:block>
+  </body>
+</html>

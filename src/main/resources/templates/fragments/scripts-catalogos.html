@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block th:fragment="scriptsCatalogos">
+      <th:block
+        th:replace="~{fragments/scripts-base :: scriptsBase}"
+      ></th:block>
+      <script th:src="@{/js/catalogo-menu.js}"></script>
+    </th:block>
+  </body>
+</html>

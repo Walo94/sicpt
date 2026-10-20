@@ -1,0 +1,189 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block
+      th:fragment="formulario"
+      th:with="urlPost=${form.id == null} ? @{/configuracion/roles} : @{/configuracion/roles/{id}(id=${form.id})}"
+    >
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title">
+          <i class="fas fa-user-shield me-2"></i>
+          <span th:text="${form.id == null} ? 'Nuevo Rol' : 'Editar Rol'"
+            >Nuevo Rol</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+
+      <form
+        th:object="${form}"
+        th:attr="hx-post=${urlPost}"
+        hx-target="#modalContent"
+        hx-swap="innerHTML"
+        hx-include="#buscador, #estadoTabla"
+        novalidate
+        autocomplete="off"
+        class="d-flex flex-column overflow-hidden"
+      >
+        <div class="modal-body">
+          <div
+            class="alert alert-danger py-2 small"
+            th:if="${#fields.hasGlobalErrors()}"
+          >
+            <div th:each="e : ${#fields.globalErrors()}" th:text="${e}"></div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label for="codigo" class="form-label"
+                >Código <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control text-uppercase"
+                th:field="*{codigo}"
+                th:errorclass="is-invalid"
+                th:readonly="${form.id != null}"
+                maxlength="30"
+                placeholder="Ej. CALIDAD"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('codigo')}"
+                th:errors="*{codigo}"
+              ></div>
+            </div>
+            <div class="col-md-8">
+              <label for="nombre" class="form-label"
+                >Nombre <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{nombre}"
+                th:errorclass="is-invalid"
+                maxlength="60"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('nombre')}"
+                th:errors="*{nombre}"
+              ></div>
+            </div>
+            <div class="col-12">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{descripcion}"
+                th:errorclass="is-invalid"
+                maxlength="200"
+              />
+              <div
+                class="invalid-feedback"
+                th:if="${#fields.hasErrors('descripcion')}"
+                th:errors="*{descripcion}"
+              ></div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="form-label mb-0">Permisos</label>
+            <span class="small">
+              <button
+                type="button"
+                class="btn btn-link btn-sm p-0"
+                data-permisos-todos-global
+                th:unless="${protegido}"
+              >
+                Marcar todos
+              </button>
+              <span th:unless="${protegido}">|</span>
+              <button
+                type="button"
+                class="btn btn-link btn-sm p-0"
+                data-permisos-ninguno-global
+                th:unless="${protegido}"
+              >
+                Quitar todos
+              </button>
+            </span>
+          </div>
+          <div class="alert alert-info py-1 small" th:if="${protegido}">
+            <i class="fas fa-lock me-1"></i> El rol Administrador siempre tiene
+            todos los permisos; no se pueden modificar.
+          </div>
+          <div
+            class="text-danger small mb-1"
+            th:if="${#fields.hasErrors('permisoIds')}"
+            th:errors="*{permisoIds}"
+          ></div>
+
+          <div class="permisos-matriz">
+            <div class="permisos-modulo" th:each="m : ${catalogo}">
+              <div class="permisos-modulo-header">
+                <span th:text="${m.modulo()}"></span>
+                <span class="permisos-rapidos" th:unless="${protegido}">
+                  <button
+                    type="button"
+                    class="btn btn-link btn-sm p-0"
+                    data-permisos-todos
+                  >
+                    Todos
+                  </button>
+                  |
+                  <button
+                    type="button"
+                    class="btn btn-link btn-sm p-0"
+                    data-permisos-ninguno
+                  >
+                    Ninguno
+                  </button>
+                </span>
+              </div>
+              <div class="permisos-fila" th:each="s : ${m.submodulos()}">
+                <span
+                  class="permisos-sub"
+                  th:text="${#strings.replace(#strings.toLowerCase(s.submodulo()), '_', ' ')}"
+                ></span>
+                <span class="permisos-checks">
+                  <label
+                    class="permisos-check"
+                    th:each="p : ${s.permisos()}"
+                    th:title="${p.descripcion}"
+                  >
+                    <input
+                      type="checkbox"
+                      name="permisoIds"
+                      th:value="${p.id}"
+                      th:checked="${protegido or (form.permisoIds != null and form.permisoIds.contains(p.id))}"
+                      th:disabled="${protegido}"
+                    />
+                    <span th:text="${#strings.toLowerCase(p.accion)}"></span>
+                  </label>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            data-bs-dismiss="modal"
+          >
+            <i class="fas fa-times me-1"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-success btn-sm">
+            <i class="fas fa-save me-1"></i> Guardar
+          </button>
+        </div>
+      </form>
+    </th:block>
+  </body>
+</html>

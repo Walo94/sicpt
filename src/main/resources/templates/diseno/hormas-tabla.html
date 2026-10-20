@@ -1,0 +1,151 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block th:fragment="tabla">
+      <div id="estadoTabla" hidden>
+        <input type="hidden" name="page" th:value="${pagina.number}" />
+        <input type="hidden" name="sort" th:value="${sort}" />
+        <input type="hidden" name="dir" th:value="${dir}" />
+      </div>
+
+      <div class="text-muted small mb-1 text-end">
+        <i class="fas fa-info-circle"></i>
+        <span id="contadorRegistros" th:text="${pagina.totalElements}">0</span>
+        registros
+      </div>
+
+      <div class="table-responsive catalogos-tabla-wrapper">
+        <table class="table table-sm table-hover catalogos-tabla mb-0">
+          <thead>
+            <tr>
+              <th
+                class="sortable"
+                style="width: 70px"
+                hx-target="#tablaContainer"
+                hx-swap="innerHTML"
+                th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=id&dir=' + (sort == 'id' and dir == 'asc' ? 'desc' : 'asc')}"
+              >
+                #
+                <i
+                  class="fas sort-icon"
+                  th:classappend="${sort == 'id'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"
+                ></i>
+              </th>
+              <th
+                class="sortable"
+                style="width: 110px"
+                hx-target="#tablaContainer"
+                hx-swap="innerHTML"
+                th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=estatus&dir=' + (sort == 'estatus' and dir == 'asc' ? 'desc' : 'asc')}"
+              >
+                Estatus
+                <i
+                  class="fas sort-icon"
+                  th:classappend="${sort == 'estatus'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"
+                ></i>
+              </th>
+              <th
+                class="sortable"
+                style="width: 130px"
+                hx-target="#tablaContainer"
+                hx-swap="innerHTML"
+                th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=claveHorma&dir=' + (sort == 'claveHorma' and dir == 'asc' ? 'desc' : 'asc')}"
+              >
+                Clave
+                <i
+                  class="fas sort-icon"
+                  th:classappend="${sort == 'claveHorma'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"
+                ></i>
+              </th>
+              <th
+                class="sortable"
+                hx-target="#tablaContainer"
+                hx-swap="innerHTML"
+                th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=descripcion&dir=' + (sort == 'descripcion' and dir == 'asc' ? 'desc' : 'asc')}"
+              >
+                Descripción
+                <i
+                  class="fas sort-icon"
+                  th:classappend="${sort == 'descripcion'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"
+                ></i>
+              </th>
+              <th
+                class="sortable"
+                style="width: 140px"
+                hx-target="#tablaContainer"
+                hx-swap="innerHTML"
+                th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=tallaEscala&dir=' + (sort == 'tallaEscala' and dir == 'asc' ? 'desc' : 'asc')}"
+              >
+                Talla (rango)
+                <i
+                  class="fas sort-icon"
+                  th:classappend="${sort == 'tallaEscala'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"
+                ></i>
+              </th>
+              <th
+                class="sortable"
+                style="width: 120px"
+                hx-target="#tablaContainer"
+                hx-swap="innerHTML"
+                th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=puntoBase&dir=' + (sort == 'puntoBase' and dir == 'asc' ? 'desc' : 'asc')}"
+              >
+                Punto base
+                <i
+                  class="fas sort-icon"
+                  th:classappend="${sort == 'puntoBase'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"
+                ></i>
+              </th>
+              <th
+                class="sortable"
+                style="width: 130px"
+                hx-target="#tablaContainer"
+                hx-swap="innerHTML"
+                th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=alturaTaconMm&dir=' + (sort == 'alturaTaconMm' and dir == 'asc' ? 'desc' : 'asc')}"
+              >
+                Tacón (mm)
+                <i
+                  class="fas sort-icon"
+                  th:classappend="${sort == 'alturaTaconMm'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"
+                ></i>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tablaBody">
+            <tr
+              th:each="d : ${pagina.content}"
+              th:attr="data-id=${d.id},data-estatus=${d.estatus}"
+            >
+              <td th:text="${d.id}"></td>
+              <td>
+                <span
+                  class="badge-estatus"
+                  th:classappend="${d.activo} ? 'badge-activo' : 'badge-inactivo'"
+                  th:text="${d.activo} ? 'Activo' : 'Inactivo'"
+                ></span>
+              </td>
+              <td>
+                <span class="badge-codigo" th:text="${d.claveHorma}">H-5100</span>
+              </td>
+              <td th:text="${d.descripcion}"></td>
+              <td>
+                <span class="badge-talla" th:text="${d.tallaEscala.descripcion}">22-26</span>
+              </td>
+              <td th:text="${@fmt.punto(d.puntoBase)}"></td>
+              <td th:text="${d.alturaTaconMm}"></td>
+            </tr>
+            <tr th:if="${pagina.empty}">
+              <td colspan="7" class="text-center text-muted py-4">
+                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                No se encontraron registros
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        th:replace="~{fragments/paginador :: paginador(${pagina}, ${baseUrl}, ${qsSort}, '#tablaContainer')}"
+      ></div>
+    </th:block>
+  </body>
+</html>

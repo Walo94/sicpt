@@ -1,0 +1,412 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <div th:fragment="navbar" class="ribbon-container">
+    <div class="ribbon-titlebar">
+      <div class="ribbon-titlebar-left">
+        <span class="ribbon-titlebar-text">SISTEMA INTEGRAL DE CONTROL DE PRODUCCIÓN</span>
+      </div>
+      <div class="ribbon-titlebar-right">
+        <div class="ribbon-user" th:if="${usuarioActual != null}">
+          <span class="ribbon-user-avatar" th:text="${usuarioActual.iniciales}">AD</span>
+          <span class="ribbon-user-info">
+            <span class="ribbon-user-name" th:text="${usuarioActual.nombreCompleto}">Administrador</span>
+            <span class="ribbon-user-role" th:text="${usuarioActual.rolesTexto}">Rol</span>
+          </span>
+          <form th:action="@{/logout}" method="post" id="formLogout" class="d-inline">
+            <button type="submit" class="ribbon-logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+              <i class="fas fa-right-from-bracket"></i>
+            </button>
+          </form>
+        </div>
+        <button type="button" class="ribbon-toggle-submenus" id="toggleSubmenus" title="Ocultar submenús">
+          <i class="fas fa-angles-up"></i>
+        </button>
+      </div>
+    </div>
+    <ul class="nav nav-tabs ribbon-tabs" id="ribbonTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tab-0" data-bs-toggle="tab" data-bs-target="#pane-0" type="button"
+          role="tab" aria-selected="true">
+          <i class="fas fa-house me-1"></i> Inicio
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('PUESTOS_VER','EMPLEADOS_VER','MARCAS_VER','LINEAS_VER','TALLAS_VER','COLORES_VER','HORMAS_VER','COMBINACIONES_VER')}">
+        <button class="nav-link" id="tab-1" data-bs-toggle="tab" data-bs-target="#pane-1" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-book me-1"></i> Catálogos
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('CLIENTES_VER','CUENTAS_VER','SUBCUENTAS_VER','CARGOS_VER','PAGOS_VER','NOTAS_CREDITO_VER','REPORTES_COBRANZA_VER')}">
+        <button class="nav-link" id="tab-2" data-bs-toggle="tab" data-bs-target="#pane-2" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-wallet me-1"></i> Cobranza
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('FICHAS_TECNICAS_VER','FICHAS_COSTOS_VER','MODELOS_VER')}">
+        <button class="nav-link" id="tab-3" data-bs-toggle="tab" data-bs-target="#pane-3" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-pen-ruler me-1"></i> Diseño
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('PEDIDOS_VER','PROGRAMACION_VER','FLUJOS_VER','EXPLOSION_VER','REPORTES_PROGRAMACION_VER')}">
+        <button class="nav-link" id="tab-4" data-bs-toggle="tab" data-bs-target="#pane-4" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-calendar-days me-1"></i> Programación
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('LOTES_VER','PROGRAMA_VER','TARJETAS_VER','AVANCES_VER','DESTAJOS_VER','INVENTARIO_PROCESO','REPORTES_PRODUCCION_VER')}">
+        <button class="nav-link" id="tab-5" data-bs-toggle="tab" data-bs-target="#pane-5" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-industry me-1"></i> Producción
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('ALMACENES_MP_VER','MATERIALES_VER','COMPRAS_VER','PROVEEDORES_VER','MOVIMIENTOS_MP_VER','KARDEX_MP_VER','EXISTENCIAS_MP_VER','REPORTES_MP_VER')}">
+        <button class="nav-link" id="tab-6" data-bs-toggle="tab" data-bs-target="#pane-6" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-box-open me-1"></i> Materia Prima
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('FACTURAS_VER','REMISIONES_VER','DEVOLUCIONES_VER','CATALOGOS_SAT_VER','REPORTES_FACTURACION_VER')}">
+        <button class="nav-link" id="tab-7" data-bs-toggle="tab" data-bs-target="#pane-7" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-file-invoice-dollar me-1"></i> Facturación
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('ALMACENES_PT_VER','EXISTENCIAS_PT_VER','MOVIMIENTOS_PT_VER','KARDEX_PT_VER','REPORTES_PT_VER')}">
+        <button class="nav-link" id="tab-8" data-bs-toggle="tab" data-bs-target="#pane-8" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-box me-1"></i> Producto Terminado
+        </button>
+      </li>
+      <li class="nav-item" role="presentation"
+        th:if="${@permisos.tieneAlguno('USUARIOS_VER','ROLES_VER','AUDITORIA_VER','EMPRESA_VER','PARAMETROS_VER')}">
+        <button class="nav-link" id="tab-9" data-bs-toggle="tab" data-bs-target="#pane-9" type="button" role="tab"
+          aria-selected="false">
+          <i class="fas fa-gears me-1"></i> Configuración
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content ribbon-content" id="ribbonTabsContent">
+      <div class="tab-pane fade show active" id="pane-0" role="tabpanel">
+        <div class="ribbon-groups">
+          <div class="ribbon-group">
+            <div class="ribbon-group-items">
+              <a th:href="@{/}" class="ribbon-btn"><i class="fas fa-house ribbon-icon-blue"></i><span>Inicio</span></a>
+              <a href="#" class="ribbon-btn" data-logout><i
+                  class="fas fa-right-from-bracket ribbon-icon-green"></i><span>Salir</span></a>
+            </div>
+            <div class="ribbon-group-label">Sistema</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="pane-1" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('PUESTOS_VER','EMPLEADOS_VER','FAMILIAS_VER','LINEAS_VER','TALLAS_VER','COLORES_VER','HORMAS_VER','COMBINACIONES_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('PUESTOS_VER','EMPLEADOS_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('PUESTOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-id-badge ribbon-icon-green"></i><span>Puestos</span></a>
+              <a th:if="${@permisos.tiene('EMPLEADOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-users ribbon-icon-orange"></i><span>Empleados</span></a>
+            </div>
+            <div class="ribbon-group-label">Organización</div>
+          </div>
+          <div class="ribbon-group"
+            th:if="${@permisos.tieneAlguno('MARCAS_VER','LINEAS_VER','TALLAS_VER','COLORES_VER','HORMAS_VER','COMBINACIONES_VER','DEPARTAMENTOS_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('MARCAS_VER')}" th:href="@{/catalogos/marcas}" class="ribbon-btn"><i
+                  class="fas fa-layer-group ribbon-icon-orange"></i><span>Marcas</span></a>
+              <a th:if="${@permisos.tiene('LINEAS_VER')}" th:href="@{/catalogos/lineas}" class="ribbon-btn"><i
+                  class="fas fa-grip-lines ribbon-icon-cyan"></i><span>Líneas</span></a>
+              <a th:if="${@permisos.tiene('TALLAS_VER')}" th:href="@{/catalogos/tallas}" class="ribbon-btn"><i
+                  class="fas fa-ruler ribbon-icon-yellow"></i><span>Tallas</span></a>
+              <a th:if="${@permisos.tiene('COLORES_VER')}" th:href="@{/catalogos/colores}" class="ribbon-btn"><i
+                  class="fas fa-palette ribbon-icon-gray"></i><span>Colores</span></a>
+              <a th:if="${@permisos.tiene('DEPARTAMENTOS_VER')}" th:href="@{/catalogos/departamentos}"
+                class="ribbon-btn">
+                <i class="fas fa-box ribbon-icon-blue"></i>
+                <span>Departamentos</span>
+              </a>
+              <a th:if="${@permisos.tiene('COMBINACIONES_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-swatchbook ribbon-icon-blue"></i><span>Combinaciones</span></a>
+              <a th:if="${@permisos.tiene('UNIDADES_VER')}" th:href="@{/catalogos/unidades}" class="ribbon-btn">
+                <i class="fas fa-ruler-combined ribbon-icon-dark"></i>
+                <span>Unidades</span>
+              </a>
+            </div>
+            <div class="ribbon-group-label">Producto</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="pane-2" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('CLIENTES_VER','CUENTAS_VER','SUBCUENTAS_VER','CARGOS_VER','PAGOS_VER','NOTAS_CREDITO_VER','REPORTES_COBRANZA_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('CLIENTES_VER','CUENTAS_VER','SUBCUENTAS_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('CLIENTES_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-users ribbon-icon-orange"></i><span>Clientes</span></a>
+              <a th:if="${@permisos.tiene('CUENTAS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-file-invoice-dollar ribbon-icon-cyan"></i><span>Cuentas</span></a>
+              <a th:if="${@permisos.tiene('SUBCUENTAS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-folder-tree ribbon-icon-yellow"></i><span>Subcuentas</span></a>
+            </div>
+            <div class="ribbon-group-label">Clientes y cuentas</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('CARGOS_VER','PAGOS_VER','NOTAS_CREDITO_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('CARGOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-money-bill-transfer ribbon-icon-cyan"></i><span>Cargos</span></a>
+              <a th:if="${@permisos.tiene('PAGOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-cash-register ribbon-icon-yellow"></i><span>Pagos</span></a>
+              <a th:if="${@permisos.tiene('NOTAS_CREDITO_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-file-circle-minus ribbon-icon-gray"></i><span>Notas de
+                  crédito</span></a>
+            </div>
+            <div class="ribbon-group-label">Operaciones</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('REPORTES_COBRANZA_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('REPORTES_COBRANZA_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-chart-line ribbon-icon-yellow"></i><span>Reportes</span></a>
+            </div>
+            <div class="ribbon-group-label">Reportes</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="pane-3" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('FICHAS_TECNICAS_VER','FICHAS_COSTOS_VER','MODELOS_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group"
+            th:if="${@permisos.tieneAlguno('FICHAS_TECNICAS_VER','FICHAS_COSTOS_VER','MODELOS_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('FICHAS_TECNICAS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-clipboard-list ribbon-icon-cyan"></i><span>Fichas
+                  técnicas</span></a>
+              <a th:if="${@permisos.tiene('FICHAS_COSTOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-calculator ribbon-icon-yellow"></i><span>Fichas de
+                  costos</span></a>
+              <a th:if="${@permisos.tiene('HORMAS_VER')}" th:href="@{/diseno/hormas}" class="ribbon-btn">
+                <i class="fas fa-cubes ribbon-icon-dark"></i><span>Hormas</span></a>
+              <a th:if="${@permisos.tiene('MODELOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-shirt ribbon-icon-gray"></i><span>Modelos</span></a>
+            </div>
+            <div class="ribbon-group-label">Diseño de producto</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="pane-4" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('PEDIDOS_VER','PROGRAMACION_VER','FLUJOS_VER','EXPLOSION_VER','REPORTES_PROGRAMACION_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('PEDIDOS_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('PEDIDOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-file-invoice ribbon-icon-yellow"></i><span>Pedidos</span></a>
+            </div>
+            <div class="ribbon-group-label">Pedidos</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('PROGRAMACION_VER','FLUJOS_VER','EXPLOSION_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('PROGRAMACION_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-calendar-check ribbon-icon-gray"></i><span>Programación</span></a>
+              <a th:if="${@permisos.tiene('FLUJOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-diagram-project ribbon-icon-dark"></i><span>Flujos</span></a>
+              <a th:if="${@permisos.tiene('EXPLOSION_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-burst ribbon-icon-blue"></i><span>Explosión</span></a>
+            </div>
+            <div class="ribbon-group-label">Planeación</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('REPORTES_PROGRAMACION_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('REPORTES_PROGRAMACION_VER')}" href="#"
+                class="ribbon-btn ribbon-btn-pendiente" title="Próximamente"><i
+                  class="fas fa-chart-bar ribbon-icon-dark"></i><span>Reportes</span></a>
+            </div>
+            <div class="ribbon-group-label">Reportes</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="pane-5" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('LOTES_VER','PROGRAMA_VER','TARJETAS_VER','AVANCES_VER','DESTAJOS_VER','INVENTARIO_PROCESO','REPORTES_PRODUCCION_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group"
+            th:if="${@permisos.tieneAlguno('LOTES_VER','PROGRAMA_VER','TARJETAS_VER','AVANCES_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('LOTES_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-boxes-stacked ribbon-icon-gray"></i><span>Lotes</span></a>
+              <a th:if="${@permisos.tiene('PROGRAMA_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-list-check ribbon-icon-dark"></i><span>Programa</span></a>
+              <a th:if="${@permisos.tiene('TARJETAS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-qrcode ribbon-icon-blue"></i><span>Tarjetas</span></a>
+              <a th:if="${@permisos.tiene('AVANCES_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-barcode ribbon-icon-green"></i><span>Avances</span></a>
+            </div>
+            <div class="ribbon-group-label">Planta</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('DESTAJOS_VER','INVENTARIO_PROCESO')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('DESTAJOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-money-bill-wave ribbon-icon-dark"></i><span>Destajos</span></a>
+              <a th:if="${@permisos.tiene('INVENTARIO_PROCESO')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-spinner ribbon-icon-blue"></i><span>Inventario en
+                  proceso</span></a>
+            </div>
+            <div class="ribbon-group-label">Control</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('REPORTES_PRODUCCION_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('REPORTES_PRODUCCION_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-chart-column ribbon-icon-blue"></i><span>Reportes</span></a>
+            </div>
+            <div class="ribbon-group-label">Reportes</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="pane-6" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('ALMACENES_MP_VER','MATERIALES_VER','COMPRAS_VER','PROVEEDORES_VER','MOVIMIENTOS_MP_VER','KARDEX_MP_VER','EXISTENCIAS_MP_VER','REPORTES_MP_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group"
+            th:if="${@permisos.tieneAlguno('ALMACENES_MP_VER','MATERIALES_VER','COMPRAS_VER','PROVEEDORES_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('ALMACENES_MP_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-warehouse ribbon-icon-dark"></i><span>Almacenes</span></a>
+              <a th:if="${@permisos.tiene('MATERIALES_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-boxes-packing ribbon-icon-blue"></i><span>Materiales</span></a>
+              <a th:if="${@permisos.tiene('COMPRAS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-cart-shopping ribbon-icon-green"></i><span>Compras</span></a>
+              <a th:if="${@permisos.tiene('PROVEEDORES_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-truck-field ribbon-icon-orange"></i><span>Proveedores</span></a>
+            </div>
+            <div class="ribbon-group-label">Abastecimiento</div>
+          </div>
+          <div class="ribbon-group"
+            th:if="${@permisos.tieneAlguno('MOVIMIENTOS_MP_VER','KARDEX_MP_VER','EXISTENCIAS_MP_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('MOVIMIENTOS_MP_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-right-left ribbon-icon-blue"></i><span>Movimientos</span></a>
+              <a th:if="${@permisos.tiene('KARDEX_MP_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-book-open ribbon-icon-green"></i><span>Kardex</span></a>
+              <a th:if="${@permisos.tiene('EXISTENCIAS_MP_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-boxes-stacked ribbon-icon-orange"></i><span>Existencias</span></a>
+            </div>
+            <div class="ribbon-group-label">Inventario</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('REPORTES_MP_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('REPORTES_MP_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-chart-pie ribbon-icon-green"></i><span>Reportes</span></a>
+            </div>
+            <div class="ribbon-group-label">Reportes</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="pane-7" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('FACTURAS_VER','REMISIONES_VER','DEVOLUCIONES_VER','CATALOGOS_SAT_VER','REPORTES_FACTURACION_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group"
+            th:if="${@permisos.tieneAlguno('FACTURAS_VER','REMISIONES_VER','DEVOLUCIONES_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('FACTURAS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-file-invoice ribbon-icon-blue"></i><span>Facturas</span></a>
+              <a th:if="${@permisos.tiene('REMISIONES_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-receipt ribbon-icon-green"></i><span>Remisiones</span></a>
+              <a th:if="${@permisos.tiene('DEVOLUCIONES_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-rotate-left ribbon-icon-orange"></i><span>Devoluciones</span></a>
+            </div>
+            <div class="ribbon-group-label">Documentos</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('CATALOGOS_SAT_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('CATALOGOS_SAT_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-list ribbon-icon-green"></i><span>Catálogos SAT</span></a>
+            </div>
+            <div class="ribbon-group-label">Catálogos y reportes</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('REPORTES_FACTURACION_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('REPORTES_FACTURACION_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-chart-line ribbon-icon-orange"></i><span>Reportes</span></a>
+            </div>
+            <div class="ribbon-group-label">Reportes</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="pane-8" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('ALMACENES_PT_VER','EXISTENCIAS_PT_VER','MOVIMIENTOS_PT_VER','KARDEX_PT_VER','REPORTES_PT_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group"
+            th:if="${@permisos.tieneAlguno('ALMACENES_PT_VER','EXISTENCIAS_PT_VER','MOVIMIENTOS_PT_VER','KARDEX_PT_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('ALMACENES_PT_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-warehouse ribbon-icon-green"></i><span>Almacenes</span></a>
+              <a th:if="${@permisos.tiene('EXISTENCIAS_PT_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-boxes-stacked ribbon-icon-orange"></i><span>Existencias</span></a>
+              <a th:if="${@permisos.tiene('MOVIMIENTOS_PT_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-right-left ribbon-icon-cyan"></i><span>Movimientos</span></a>
+              <a th:if="${@permisos.tiene('KARDEX_PT_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-book-open ribbon-icon-yellow"></i><span>Kardex</span></a>
+            </div>
+            <div class="ribbon-group-label">Inventario</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('REPORTES_PT_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('REPORTES_PT_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente"><i class="fas fa-chart-pie ribbon-icon-orange"></i><span>Reportes</span></a>
+            </div>
+            <div class="ribbon-group-label">Reportes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CONFIGURACIÓN ===== -->
+      <div class="tab-pane fade" id="pane-9" role="tabpanel"
+        th:if="${@permisos.tieneAlguno('USUARIOS_VER','ROLES_VER','AUDITORIA_VER','EMPRESA_VER','PARAMETROS_VER')}">
+        <div class="ribbon-groups">
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('USUARIOS_VER','ROLES_VER','AUDITORIA_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('USUARIOS_VER')}" th:href="@{/configuracion/usuarios}" class="ribbon-btn">
+                <i class="fas fa-user-cog ribbon-icon-blue"></i>
+                <span>Usuarios</span>
+              </a>
+              <a th:if="${@permisos.tiene('ROLES_VER')}" th:href="@{/configuracion/roles}" class="ribbon-btn">
+                <i class="fas fa-user-shield ribbon-icon-green"></i>
+                <span>Roles</span>
+              </a>
+              <a th:if="${@permisos.tiene('AUDITORIA_VER')}" th:href="@{/configuracion/auditoria}" class="ribbon-btn">
+                <i class="fas fa-clipboard-check ribbon-icon-gray"></i>
+                <span>Auditoría</span>
+              </a>
+            </div>
+            <div class="ribbon-group-label">Seguridad</div>
+          </div>
+          <div class="ribbon-group" th:if="${@permisos.tieneAlguno('EMPRESA_VER','PARAMETROS_VER')}">
+            <div class="ribbon-group-items">
+              <a th:if="${@permisos.tiene('EMPRESA_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente">
+                <i class="fas fa-industry ribbon-icon-orange"></i>
+                <span>Empresa</span>
+              </a>
+              <a th:if="${@permisos.tiene('PARAMETROS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
+                title="Próximamente">
+                <i class="fas fa-cog ribbon-icon-gray"></i>
+                <span>Parámetros</span>
+              </a>
+            </div>
+            <div class="ribbon-group-label">Sistema</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
