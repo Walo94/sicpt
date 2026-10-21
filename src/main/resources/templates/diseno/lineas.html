@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <th:block th:replace="~{fragments/head :: headComun('Lineas')}"></th:block>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid mt-3 px-4">
+      <div class="catalogos-header">
+        <h2 class="catalogos-title">
+          <i class="fas fa-grip-lines ribbon-icon-cyan me-2"></i> Catálogo de
+          Lineas
+        </h2>
+        <button
+          th:if="${@permisos.tiene('LINEAS_CREAR')}"
+          class="btn btn-success btn-sm"
+          id="btnAgregar"
+          th:attr="hx-get=@{/diseno/lineas/nuevo}"
+          hx-target="#modalContent"
+          hx-swap="innerHTML"
+        >
+          <i class="fas fa-plus me-1"></i> Agregar Linea
+        </button>
+      </div>
+
+      <!-- Buscador: HTMX con debounce de 300 ms -->
+      <div class="catalogos-toolbar">
+        <div class="input-group input-group-sm" style="max-width: 350px">
+          <span class="input-group-text bg-white"
+            ><i class="fas fa-search text-muted"></i
+          ></span>
+          <input
+            type="search"
+            class="form-control"
+            id="buscador"
+            name="q"
+            th:value="${q}"
+            placeholder="Buscar por descripción..."
+            autocomplete="off"
+            th:attr="hx-get=@{/diseno/lineas}"
+            hx-trigger="input changed delay:300ms, search"
+            hx-target="#tablaContainer"
+            hx-swap="innerHTML"
+            hx-include="#estadoTabla [name='sort'], #estadoTabla [name='dir']"
+            hx-sync="this:replace"
+          />
+        </div>
+      </div>
+
+      <div id="tablaContainer">
+        <th:block th:replace="~{diseno/lineas-tabla :: tabla}"></th:block>
+      </div>
+    </div>
+
+    <!-- Menú contextual (clic derecho). Solo muestra lo que el usuario puede hacer -->
+    <div
+      id="menuContextual"
+      class="menu-contextual"
+      th:attr="data-base=@{/diseno/lineas}"
+    >
+      <a
+        href="#"
+        class="menu-contextual-item"
+        data-action="editar"
+        th:if="${@permisos.tiene('LINEAS_EDITAR')}"
+      >
+        <i class="fas fa-edit text-primary"></i> Editar
+      </a>
+      <a
+        href="#"
+        class="menu-contextual-item"
+        data-action="estatus"
+        th:if="${@permisos.tiene('LINEAS_ESTATUS')}"
+      >
+        <i class="fas fa-power-off" id="iconEstatus"></i>
+        <span id="textoEstatus">Dar de baja</span>
+      </a>
+    </div>
+
+    <!-- Modal genérico para catálogos: el contenido llega por HTMX -->
+    <div class="modal fade" id="modalCatalogo" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="modalContent"></div>
+      </div>
+    </div>
+
+    <!-- Scripts reutilizados -->
+    <th:block
+      th:replace="~{fragments/scripts-catalogos :: scriptsCatalogos}"
+    ></th:block>
+  </body>
+</html>

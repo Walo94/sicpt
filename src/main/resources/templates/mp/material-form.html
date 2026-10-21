@@ -1,0 +1,128 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block th:fragment="formulario">
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title">
+          <i class="fas fa-boxes-packing me-2"></i>
+          <span th:text="${form.id == null} ? 'Nuevo Material' : 'Editar Material'">Nuevo Material</span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <form
+        th:object="${form}"
+        th:attr="hx-post=${form.id == null} ? @{/mp/materiales} : @{/mp/materiales/{id}(id=${form.id})}"
+        hx-target="#modalContent"
+        hx-swap="innerHTML"
+        hx-include="#buscador, #estadoTabla"
+        novalidate
+        autocomplete="off"
+        id="formMaterial"
+      >
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="codigo" class="form-label">
+                Código <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control text-uppercase"
+                th:field="*{codigo}" th:errorclass="is-invalid"
+                maxlength="50" placeholder="Ej. MAT-001" />
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('codigo')}"
+                th:errors="*{codigo}"></div>
+            </div>
+            <div class="col-md-8">
+              <label for="descripcion" class="form-label">
+                Descripción <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control"
+                th:field="*{descripcion}" th:errorclass="is-invalid"
+                maxlength="150" placeholder="Ej. Pegamento XL" />
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}"
+                th:errors="*{descripcion}"></div>
+            </div>
+
+            <!-- Combo unidad de compra -->
+            <div class="col-md-6">
+              <label for="unidadCompraBuscar" class="form-label">
+                Unidad de compra <span class="text-danger">*</span>
+              </label>
+              <div class="combo-busqueda" id="unidadCompraCombo"
+                   data-url="/catalogos/unidades/opciones">
+                <input type="text" class="form-control" id="unidadCompraBuscar"
+                  placeholder="Buscar unidad..." autocomplete="off"
+                  th:value="${form.unidadCompraTexto}" />
+                <input type="hidden" th:field="*{unidadCompraId}" id="unidadCompraId" />
+                <div class="combo-busqueda-dropdown" id="unidadCompraDropdown"></div>
+              </div>
+              <div class="invalid-feedback d-block"
+                   th:if="${#fields.hasErrors('unidadCompraId')}"
+                   th:errors="*{unidadCompraId}"></div>
+            </div>
+
+            <!-- Combo unidad de consumo -->
+            <div class="col-md-6">
+              <label for="unidadConsumoBuscar" class="form-label">
+                Unidad de consumo <span class="text-danger">*</span>
+              </label>
+              <div class="combo-busqueda" id="unidadConsumoCombo"
+                   data-url="/catalogos/unidades/opciones">
+                <input type="text" class="form-control" id="unidadConsumoBuscar"
+                  placeholder="Buscar unidad..." autocomplete="off"
+                  th:value="${form.unidadConsumoTexto}" />
+                <input type="hidden" th:field="*{unidadConsumoId}" id="unidadConsumoId" />
+                <div class="combo-busqueda-dropdown" id="unidadConsumoDropdown"></div>
+              </div>
+              <div class="invalid-feedback d-block"
+                   th:if="${#fields.hasErrors('unidadConsumoId')}"
+                   th:errors="*{unidadConsumoId}"></div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="factorConversion" class="form-label">
+                Factor de conversión <span class="text-danger">*</span>
+              </label>
+              <input type="number" class="form-control"
+                th:field="*{factorConversion}" th:errorclass="is-invalid"
+                step="0.000001" min="0.000001" placeholder="Ej. 1000" />
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('factorConversion')}"
+                th:errors="*{factorConversion}"></div>
+              <div class="form-text">
+                <i class="fas fa-info-circle me-1"></i>
+                Cuántas unidades de <strong>consumo</strong> hay en 1 unidad de
+                <strong>compra</strong>. Ej.: compra KG, consumo GR → 1000.
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="tipoMaterial" class="form-label">
+                Tipo de material <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" th:field="*{tipoMaterial}" th:errorclass="is-invalid">
+                <option value="">— Seleccionar —</option>
+                <option value="D">Directo (D)</option>
+                <option value="I">Indirecto (I)</option>
+              </select>
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('tipoMaterial')}"
+                th:errors="*{tipoMaterial}"></div>
+              <div class="form-text">
+                <i class="fas fa-info-circle me-1"></i>
+                Directo: forma parte del producto. Indirecto: apoyo al proceso.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-success btn-sm">
+            <i class="fas fa-save me-1"></i> Guardar
+          </button>
+        </div>
+      </form>
+    </th:block>
+  </body>
+</html>

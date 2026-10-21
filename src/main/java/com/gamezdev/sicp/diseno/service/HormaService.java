@@ -1,9 +1,10 @@
 package com.gamezdev.sicp.diseno.service;
 
-import com.gamezdev.sicp.catalogos.entity.Talla;
-import com.gamezdev.sicp.catalogos.repository.TallaRepository;
+import com.gamezdev.sicp.common.dto.OpcionDto;
 import com.gamezdev.sicp.diseno.entity.Horma;
+import com.gamezdev.sicp.diseno.entity.Talla;
 import com.gamezdev.sicp.diseno.repository.HormaRepository;
+import com.gamezdev.sicp.diseno.repository.TallaRepository;
 import com.gamezdev.sicp.security.service.AuditoriaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -118,5 +120,14 @@ public class HormaService {
             throw new TallaInvalidaException("La talla seleccionada está inactiva.");
         }
         return t;
+    }
+
+    @SuppressWarnings("null")
+    @Transactional(readOnly = true)
+    public List<OpcionDto> buscarActivasParaCombo(String q) {
+        var pageable = PageRequest.of(0, 20, Sort.by("claveHorma"));
+        return repository.buscar(q == null ? "" : q.trim(), pageable)
+                .stream().filter(Horma::isActivo)
+                .map(h -> new OpcionDto(h.getId(), h.getClaveHorma() + " - " + h.getDescripcion())).toList();
     }
 }

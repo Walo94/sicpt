@@ -1,0 +1,123 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <th:block th:fragment="formulario">
+        <div class="modal-header modal-header-custom">
+            <h5 class="modal-title">
+                <i class="fas fa-swatchbook me-2"></i>
+                <span th:text="${form.id == null} ? 'Nueva Combinación' : 'Editar Combinación'">Nueva Combinación</span>
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Cerrar"></button>
+        </div>
+
+        <form th:object="${form}"
+            th:attr="hx-post=${form.id == null} ? @{/diseno/combinaciones} : @{/diseno/combinaciones/{id}(id=${form.id})}"
+            hx-target="#modalContent" hx-swap="innerHTML" hx-include="#buscador, #estadoTabla" novalidate
+            autocomplete="off" id="formCombinacion">
+
+            <div class="modal-body">
+                <div class="row g-3">
+
+                    <!-- Código y Modelo -->
+                    <div class="col-md-4">
+                        <label for="codigoCombinacion" class="form-label">Código Combinación <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control text-uppercase" th:field="*{codigoCombinacion}"
+                            th:errorclass="is-invalid" maxlength="100" placeholder="Ej. 5164-AZUL" th:readonly="${form.id != null}" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('codigoCombinacion')}"
+                            th:errors="*{codigoCombinacion}"></div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label for="modeloBuscar" class="form-label">Modelo <span class="text-danger">*</span></label>
+                        <div class="combo-busqueda" id="modeloCombo" data-url="/diseno/modelos/opciones">
+                            <input type="text" class="form-control" id="modeloBuscar"
+                                placeholder="Escribe código o descripción..." autocomplete="off"
+                                th:value="${form.modeloTexto}" />
+                            <input type="hidden" th:field="*{modeloId}" id="modeloId" />
+                            <div class="combo-busqueda-dropdown" id="modeloDropdown"></div>
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('modeloId')}"
+                            th:errors="*{modeloId}"></div>
+                    </div>
+
+                    <!-- Color y Talla -->
+                    <div class="col-md-6">
+                        <label for="colorBuscar" class="form-label">Color <span class="text-danger">*</span></label>
+                        <div class="combo-busqueda" id="colorCombo" data-url="/diseno/colores/opciones">
+                            <input type="text" class="form-control" id="colorBuscar"
+                                placeholder="Escribe para buscar..." autocomplete="off" th:value="${form.colorTexto}" />
+                            <input type="hidden" th:field="*{colorId}" id="colorId" />
+                            <div class="combo-busqueda-dropdown" id="colorDropdown"></div>
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('colorId')}"
+                            th:errors="*{colorId}"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="tallaBuscar" class="form-label">Talla (Corrida) <span
+                                class="text-danger">*</span></label>
+                        <div class="combo-busqueda" id="tallaCombo" data-url="/diseno/tallas/opciones">
+                            <input type="text" class="form-control" id="tallaBuscar"
+                                placeholder="Escribe para buscar..." autocomplete="off" th:value="${form.tallaTexto}" />
+                            <input type="hidden" th:field="*{tallaId}" id="tallaId" />
+                            <div class="combo-busqueda-dropdown" id="tallaDropdown"></div>
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('tallaId')}"
+                            th:errors="*{tallaId}"></div>
+                    </div>
+
+                    <!-- Unidad, SAT y Precio -->
+                    <div class="col-md-4">
+                        <label for="unidadBuscar" class="form-label">Unidad de Venta <span
+                                class="text-danger">*</span></label>
+                        <div class="combo-busqueda" id="unidadCombo" data-url="/diseno/unidades/opciones">
+                            <input type="text" class="form-control" id="unidadBuscar"
+                                placeholder="Escribe para buscar..." autocomplete="off"
+                                th:value="${form.unidadVentaTexto}" />
+                            <input type="hidden" th:field="*{unidadVentaId}" id="unidadVentaId" />
+                            <div class="combo-busqueda-dropdown" id="unidadDropdown"></div>
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('unidadVentaId')}"
+                            th:errors="*{unidadVentaId}"></div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="claveSatProducto" class="form-label">Clave SAT <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{claveSatProducto}"
+                            th:errorclass="is-invalid" maxlength="15" placeholder="Ej. 53111500" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('claveSatProducto')}"
+                            th:errors="*{claveSatProducto}"></div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="precioVentaBase" class="form-label">Precio Venta Base <span
+                                class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" th:field="*{precioVentaBase}"
+                                th:errorclass="is-invalid" step="0.01" min="0" placeholder="0.00" />
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('precioVentaBase')}"
+                            th:errors="*{precioVentaBase}"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-save me-1"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </th:block>
+</body>
+
+</html>
