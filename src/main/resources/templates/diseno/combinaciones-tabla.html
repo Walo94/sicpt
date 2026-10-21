@@ -1,0 +1,81 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <th:block th:fragment="tabla">
+        <div id="estadoTabla" hidden>
+            <input type="hidden" name="page" th:value="${pagina.number}" />
+            <input type="hidden" name="sort" th:value="${sort}" />
+            <input type="hidden" name="dir" th:value="${dir}" />
+        </div>
+
+        <div class="text-muted small mb-1 text-end">
+            <i class="fas fa-info-circle"></i> <span th:text="${pagina.totalElements}">0</span> registros
+        </div>
+
+        <div class="table-responsive catalogos-tabla-wrapper">
+            <table class="table table-sm table-hover catalogos-tabla mb-0">
+                <thead>
+                    <tr>
+                        <th class="sortable" style="width: 70px" hx-target="#tablaContainer" hx-swap="innerHTML"
+                            th:attr="hx-get=${baseUrl + '?' + qsQ + '&sort=id&dir=' + (sort == 'id' and dir == 'asc' ? 'desc' : 'asc')}">
+                            #
+                            <i class="fas sort-icon"
+                                th:classappend="${sort == 'id'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"></i>
+                        </th>
+                        <th style="width: 110px">Estatus</th>
+                        <th style="width: 150px">Código Comb.</th>
+                        <th>Color</th>
+                        <th>Modelo</th>
+                        <th style="width: 140px">Corrida (Talla)</th>
+                        <th style="width: 120px">Unidad</th>
+                        <th style="width: 100px">Precio</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaBody">
+                    <tr th:each="d : ${pagina.content}" th:attr="data-id=${d.id},data-estatus=${d.estatus}">
+                        <td th:text="${d.id}"></td>
+                        <td>
+                            <span class="badge-estatus" th:classappend="${d.activo} ? 'badge-activo' : 'badge-inactivo'"
+                                th:text="${d.activo} ? 'Activo' : 'Inactivo'"></span>
+                        </td>
+                        <td><span class="badge-codigo" th:text="${d.codigoCombinacion}">5164-AZUL</span></td>
+                        <td>
+                            <div class="color-cell" th:if="${d.color.hasColor()}"
+                                th:attr="data-color-json=${d.color.colorJson}">
+                                <span class="color-swatch"
+                                    th:each="ci : ${@colorService.parseColores(d.color.colorJson)}"
+                                    th:style="'background:' + ${ci.hex()}" th:title="${ci.nombre()}"></span>
+                                <span class="fw-bold ms-1" th:text="${d.color.descripcion}">AZUL</span>
+                            </div>
+                            <span th:unless="${d.color.hasColor()}" th:text="${d.color.descripcion}"
+                                class="fw-bold"></span>
+                        </td>
+                        <td>
+                            <span class="badge-codigo" th:text="${d.modelo.codigoModelo}">9936</span>
+                            <span class="ms-1" th:text="${d.modelo.descripcion}">FLEXI RUNNER</span>
+                        </td>
+                        <td>
+                            <span class="badge-talla">
+                                <span th:text="${d.talla.descripcion}">94</span>
+                                <span
+                                    th:text="'(' + ${@fmt.punto(d.talla.puntoInicial)} + ' - ' + ${@fmt.punto(d.talla.puntoFinal)} + ')'"></span>
+                            </span>
+                        </td>
+                        <td><span class="badge-unidad" th:text="${d.unidadVenta.codigo}">PAR</span></td>
+                        <td th:text="${'$' + #numbers.formatDecimal(d.precioVentaBase, 1, 2)}"></td>
+                    </tr>
+                    <tr th:if="${pagina.empty}">
+                        <td colspan="8" class="text-center text-muted py-4"><i
+                                class="fas fa-inbox fa-2x mb-2 d-block"></i> No
+                            hay combinaciones</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="~{fragments/paginador :: paginador(${pagina}, ${baseUrl}, ${qsSort}, '#tablaContainer')}">
+        </div>
+    </th:block>
+</body>
+
+</html>

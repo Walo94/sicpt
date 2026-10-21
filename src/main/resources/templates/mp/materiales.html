@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: headComun('Materiales')}"></th:block>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid mt-3 px-4">
+        <div class="catalogos-header">
+            <h2 class="catalogos-title">
+                <i class="fas fa-boxes-packing ribbon-icon-blue me-2"></i> Catálogo de Materiales
+            </h2>
+            <button th:if="${@permisos.tiene('MATERIALES_CREAR')}" class="btn btn-success btn-sm" id="btnAgregar"
+                th:attr="hx-get=@{/mp/materiales/nuevo}" hx-target="#modalContent" hx-swap="innerHTML">
+                <i class="fas fa-plus me-1"></i> Agregar Material
+            </button>
+        </div>
+
+        <div class="catalogos-toolbar">
+            <div class="input-group input-group-sm" style="max-width: 350px">
+                <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                <input type="search" class="form-control" id="buscador" name="q" th:value="${q}"
+                    placeholder="Buscar por código o descripción..." autocomplete="off"
+                    th:attr="hx-get=@{/mp/materiales}" hx-trigger="input changed delay:300ms, search"
+                    hx-target="#tablaContainer" hx-swap="innerHTML"
+                    hx-include="#estadoTabla [name='sort'], #estadoTabla [name='dir']" hx-sync="this:replace" />
+            </div>
+        </div>
+
+        <div id="tablaContainer">
+            <th:block th:replace="~{mp/materiales-tabla :: tabla}"></th:block>
+        </div>
+    </div>
+
+    <!-- Menú contextual -->
+    <div id="menuContextual" class="menu-contextual" th:attr="data-base=@{/mp/materiales}">
+        <a href="#" class="menu-contextual-item" data-action="editar" th:if="${@permisos.tiene('MATERIALES_EDITAR')}">
+            <i class="fas fa-edit text-primary"></i> Editar
+        </a>
+        <a href="#" class="menu-contextual-item" data-action="estatus" th:if="${@permisos.tiene('MATERIALES_ESTATUS')}">
+            <i class="fas fa-power-off" id="iconEstatus"></i>
+            <span id="textoEstatus">Dar de baja</span>
+        </a>
+    </div>
+
+    <!-- Modal genérico -->
+    <div class="modal fade" id="modalCatalogo" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" id="modalContent"></div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/scripts-catalogos :: scriptsCatalogos}"></th:block>
+    <!-- Script genérico del combo con búsqueda (reutilizable) -->
+    <script th:src="@{/js/combo-busqueda.js}"></script>
+</body>
+
+</html>

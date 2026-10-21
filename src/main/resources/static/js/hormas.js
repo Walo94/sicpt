@@ -44,7 +44,7 @@
     });
 
     function buscar(q) {
-      const url = `/catalogos/tallas/opciones?q=${encodeURIComponent(q)}`;
+      const url = `/diseno/tallas/opciones?q=${encodeURIComponent(q)}`;
       fetch(url, { headers: { Accept: "application/json" } })
         .then((r) => (r.ok ? r.json() : []))
         .then((data) => {

@@ -1,16 +1,20 @@
 package com.gamezdev.sicp.diseno.controller;
 
-import com.gamezdev.sicp.catalogos.service.TallaService;
+import com.gamezdev.sicp.common.dto.OpcionDto;
 import com.gamezdev.sicp.common.util.HtmxResponse;
 import com.gamezdev.sicp.diseno.dto.HormaForm;
 import com.gamezdev.sicp.diseno.entity.Horma;
 import com.gamezdev.sicp.diseno.service.HormaService;
+import com.gamezdev.sicp.diseno.service.TallaService;
 import com.gamezdev.sicp.diseno.service.HormaService.DuplicadoException;
 import com.gamezdev.sicp.diseno.service.HormaService.TallaInvalidaException;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -177,4 +181,10 @@ public class HormaController {
         model.addAttribute("qsSort", qsSort);
     }
 
+    @GetMapping("/opciones")
+    @PreAuthorize("hasAnyAuthority('MODELOS_VER','MODELOS_CREAR','MODELOS_EDITAR','HORMAS_VER','HORMAS_CREAR','HORMAS_EDITAR')")
+    @ResponseBody
+    public List<OpcionDto> opciones(@RequestParam(defaultValue = "") String q) {
+        return service.buscarActivasParaCombo(q);
+    }
 }

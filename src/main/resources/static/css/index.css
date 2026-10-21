@@ -164,9 +164,34 @@
 
 .ribbon-groups {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0;
   align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+   -webkit-overflow-scrolling: touch;
+   padding-bottom: 4px;
+}
+
+/* Scrollbar estilizado */
+.ribbon-groups::-webkit-scrollbar {
+  height: 6px;
+}
+.ribbon-groups::-webkit-scrollbar-track {
+  background: transparent;
+}
+.ribbon-groups::-webkit-scrollbar-thumb {
+  background-color: var(--ribbon-border);
+  border-radius: 4px;
+}
+.ribbon-groups::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ribbon-blue-light);
+}
+
+/* Para Firefox */
+.ribbon-groups {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ribbon-border) transparent;
 }
 
 /* Grupo de botones */
@@ -177,6 +202,8 @@
   padding: 0 12px;
   border-right: 1px solid var(--ribbon-border);
   min-width: 80px;
+  min-width: max-content;
+  flex-shrink: 0;
 }
 
 .ribbon-group:last-child {
@@ -305,16 +332,6 @@
   .ribbon-tabs .nav-link {
     padding: 4px 10px;
     font-size: 0.7rem;
-  }
-  .ribbon-group {
-    border-right: none;
-    border-bottom: 1px solid var(--ribbon-border);
-    width: 100%;
-    padding: 6px 0;
-  }
-  .ribbon-group-items {
-    justify-content: center;
-    flex-wrap: wrap;
   }
 }
 

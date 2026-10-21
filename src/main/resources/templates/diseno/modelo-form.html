@@ -1,0 +1,105 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <th:block th:fragment="formulario">
+        <div class="modal-header modal-header-custom">
+            <h5 class="modal-title">
+                <i class="fas fa-shirt me-2"></i>
+                <span th:text="${form.id == null} ? 'Nuevo Modelo' : 'Editar Modelo'">Nuevo Modelo</span>
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Cerrar"></button>
+        </div>
+
+        <form th:object="${form}"
+            th:attr="hx-post=${form.id == null} ? @{/diseno/modelos} : @{/diseno/modelos/{id}(id=${form.id})}"
+            hx-target="#modalContent" hx-swap="innerHTML" hx-include="#buscador, #estadoTabla" novalidate
+            autocomplete="off" id="formModelo">
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="codigoModelo" class="form-label">
+                            Código <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control text-uppercase" th:field="*{codigoModelo}"
+                            th:errorclass="is-invalid" maxlength="50" placeholder="Ej. 5164" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('codigoModelo')}"
+                            th:errors="*{codigoModelo}"></div>
+                    </div>
+                    <div class="col-md-8">
+                        <label for="descripcion" class="form-label">
+                            Descripción <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" th:field="*{descripcion}" th:errorclass="is-invalid"
+                            maxlength="150" placeholder="Ej. Tenis Deportivo Flex" />
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}"
+                            th:errors="*{descripcion}"></div>
+                    </div>
+
+                    <!-- Marca -->
+                    <div class="col-md-6">
+                        <label for="marcaBuscar" class="form-label">
+                            Marca <span class="text-danger">*</span>
+                        </label>
+                        <div class="combo-busqueda" id="marcaCombo" data-url="/diseno/marcas/opciones">
+                            <input type="text" class="form-control" id="marcaBuscar"
+                                placeholder="Escribe para buscar..." autocomplete="off" th:value="${form.marcaTexto}" />
+                            <input type="hidden" th:field="*{marcaId}" id="marcaId" />
+                            <div class="combo-busqueda-dropdown" id="marcaDropdown"></div>
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('marcaId')}"
+                            th:errors="*{marcaId}"></div>
+                    </div>
+
+                    <!-- Línea -->
+                    <div class="col-md-6">
+                        <label for="lineaBuscar" class="form-label">
+                            Línea <span class="text-danger">*</span>
+                        </label>
+                        <div class="combo-busqueda" id="lineaCombo" data-url="/diseno/lineas/opciones">
+                            <input type="text" class="form-control" id="lineaBuscar"
+                                placeholder="Escribe para buscar..." autocomplete="off" th:value="${form.lineaTexto}" />
+                            <input type="hidden" th:field="*{lineaId}" id="lineaId" />
+                            <div class="combo-busqueda-dropdown" id="lineaDropdown"></div>
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('lineaId')}"
+                            th:errors="*{lineaId}"></div>
+                    </div>
+
+                    <!-- Horma -->
+                    <div class="col-md-6">
+                        <label for="hormaBuscar" class="form-label">
+                            Horma <span class="text-danger">*</span>
+                        </label>
+                        <div class="combo-busqueda" id="hormaCombo" data-url="/diseno/hormas/opciones">
+                            <input type="text" class="form-control" id="hormaBuscar"
+                                placeholder="Escribe para buscar..." autocomplete="off" th:value="${form.hormaTexto}" />
+                            <input type="hidden" th:field="*{hormaId}" id="hormaId" />
+                            <div class="combo-busqueda-dropdown" id="hormaDropdown"></div>
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('hormaId')}"
+                            th:errors="*{hormaId}"></div>
+                    </div>
+                </div>
+
+                <div class="form-text mt-2">
+                    <i class="fas fa-info-circle me-1"></i>
+                    El modelo define el "esqueleto técnico": marca, línea, horma y escala de
+                    tallas. Los colores y consumos se configuran en pasos posteriores.
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-save me-1"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </th:block>
+</body>
+
+</html>
