@@ -73,6 +73,26 @@ public class ModeloController {
         form.setLineaTexto(m.getLinea().getDescripcion());
         form.setHormaId(m.getHorma().getId());
         form.setHormaTexto(m.getHorma().getClaveHorma() + " - " + m.getHorma().getDescripcion());
+
+        // Mapear nuevos campos
+        form.setMaterialCorte(m.getMaterialCorte());
+        form.setForro(m.getForro());
+        form.setPlantilla(m.getPlantilla());
+        form.setSuela(m.getSuela());
+        form.setColorPrincipal(m.getColorPrincipal());
+        form.setEstilo(m.getEstilo());
+        form.setCordones(m.getCordones());
+        form.setContrafuerte(m.getContrafuerte());
+        form.setCuello(m.getCuello());
+        form.setLengueta(m.getLengueta());
+        form.setOjales(m.getOjales());
+        form.setVidaUtil(m.getVidaUtil());
+        form.setTallasDisponibles(m.getTallasDisponibles());
+        form.setObservaciones(m.getObservaciones());
+        form.setRecomendaciones(m.getRecomendaciones());
+        form.setAlmacenamiento(m.getAlmacenamiento());
+        form.setImagenUrlActual(m.getImagenUrl());
+
         model.addAttribute("form", form);
         return FORM;
     }
@@ -80,59 +100,44 @@ public class ModeloController {
     @PostMapping
     @PreAuthorize("hasAuthority('MODELOS_CREAR')")
     public String crear(@Valid @ModelAttribute("form") ModeloForm form, BindingResult br,
-            @RequestParam(defaultValue = "") String q,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "id") String sort,
-            @RequestParam(defaultValue = "asc") String dir,
+            @RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "id") String sort, @RequestParam(defaultValue = "asc") String dir,
             Model model, HttpServletResponse res) {
         form.setId(null);
-        if (!br.hasErrors()) {
-            try {
-                service.crear(form.getCodigoModelo(), form.getDescripcion(),
-                        form.getMarcaId(), form.getLineaId(), form.getHormaId());
-            } catch (DuplicadoException e) {
-                br.rejectValue("codigoModelo", "duplicado", e.getMessage());
-            } catch (ReferenciaInvalidaException e) {
-                mapearReferencia(br, e.getMessage());
-            }
-        }
-        if (br.hasErrors()) {
-            refrescarLabels(form);
-            return FORM;
-        }
-
-        HtmxResponse.exito(res, "#tablaContainer", "Modelo creado correctamente");
-        cargarListado(model, q, page, sort, dir);
-        return TABLA;
+        return guardarInterno(form, br, q, page, sort, dir, model, res);
     }
 
-    @PostMapping("/{id}")
+     @PostMapping("/{id}")
     @PreAuthorize("hasAuthority('MODELOS_EDITAR')")
     public String actualizar(@PathVariable Integer id,
             @Valid @ModelAttribute("form") ModeloForm form, BindingResult br,
-            @RequestParam(defaultValue = "") String q,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "id") String sort,
-            @RequestParam(defaultValue = "asc") String dir,
+            @RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "id") String sort, @RequestParam(defaultValue = "asc") String dir,
             Model model, HttpServletResponse res) {
         obtenerOCuatrocientosCuatro(id);
         form.setId(id);
+        return guardarInterno(form, br, q, page, sort, dir, model, res);
+    }
+
+    private String guardarInterno(ModeloForm form, BindingResult br, String q, int page, String sort, String dir, Model model, HttpServletResponse res) {
         if (!br.hasErrors()) {
             try {
-                service.actualizar(id, form.getCodigoModelo(), form.getDescripcion(),
-                        form.getMarcaId(), form.getLineaId(), form.getHormaId());
-            } catch (DuplicadoException e) {
+                service.crear(form);
+            } catch (ModeloService.DuplicadoException e) {
                 br.rejectValue("codigoModelo", "duplicado", e.getMessage());
-            } catch (ReferenciaInvalidaException e) {
-                mapearReferencia(br, e.getMessage());
+            } catch (ModeloService.ReferenciaInvalidaException e) {
+                if (e.getMessage().contains("marca")) br.rejectValue("marcaId", "refInvalida", e.getMessage());
+                else if (e.getMessage().contains("línea")) br.rejectValue("lineaId", "refInvalida", e.getMessage());
+                else if (e.getMessage().contains("horma")) br.rejectValue("hormaId", "refInvalida", e.getMessage());
+            } catch (Exception e) {
+                br.reject("global", "Error al guardar: " + e.getMessage());
             }
         }
         if (br.hasErrors()) {
-            refrescarLabels(form);
+            // refrescarLabels...
             return FORM;
         }
-
-        HtmxResponse.exito(res, "#tablaContainer", "Modelo actualizado correctamente");
+        HtmxResponse.exito(res, "#tablaContainer", "Modelo guardado correctamente");
         cargarListado(model, q, page, sort, dir);
         return TABLA;
     }

@@ -1,0 +1,16 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+  <th:block th:fragment="individual">
+    <div th:replace="~{diseno/ficha-tecnica-fragmento :: fichaTabla(${modelo}, ${bom})}"></div>
+  </th:block>
+
+  <th:block th:fragment="masivo">
+    <div th:each="m : ${modelos}" class="ficha-page-break">
+      <div th:replace="~{diseno/ficha-tecnica-fragmento :: fichaTabla(${m}, ${m.bomActivo})}"></div>
+    </div>
+  </th:block>
+
+</body>
+</html>

@@ -65,6 +65,11 @@
         values: estadoTabla(),
       });
     }
+    else if (item.dataset.action === 'reporte') {
+    const baseUrl = menu.getAttribute("data-base");
+    // Asumimos que la URL del reporte es /base/{id}/reporte
+    htmx.ajax('GET', `${baseUrl}/${idSeleccionado}/reporte`, { target: '#modalContent', swap: 'innerHTML' });
+}
     cerrarMenu();
   });
 

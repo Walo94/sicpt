@@ -1,0 +1,71 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- El fragmento debe contener TODO el contenido que se inyecta en #modalContent -->
+    <th:block th:fragment="reporte">
+        <div class="modal-header modal-header-custom">
+            <h5 class="modal-title">
+                <i class="fas fa-print me-2"></i> Reporte BOM
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body bg-white">
+            <!-- Selector de Versión CORREGIDO -->
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-6">
+                    <h6 class="mb-0 text-primary" th:text="${bom.modelo.codigoModelo + ' - ' + bom.modelo.descripcion}">
+                        Modelo</h6>
+                </div>
+                <div class="col-md-6 text-end">
+                    <label class="me-2 fw-bold align-middle">Versión:</label>
+                    <select class="form-select form-select-sm d-inline-block w-auto align-middle" name="versionId"
+                        th:attr="hx-get=@{/diseno/bom/{id}/reporte(id=${bom.id})}" hx-trigger="change"
+                        hx-target="#modalContent" hx-swap="innerHTML">
+                        <option th:each="v : ${versiones}" th:value="${v.id}"
+                            th:text="'Versión ' + ${v.version} + ' (' + ${#temporals.format(v.fechaModificacion, 'dd/MM/yyyy HH:mm')} + ')'"
+                            th:selected="${v.id == bom.id}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tabla de Materiales -->
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 100px;">Tipo</th>
+                        <th>Pieza</th>
+                        <th>Material</th>
+                        <th class="text-end" style="width: 150px;">Consumo (x par)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${bom.consumos}" th:if="${c.material.tipoMaterial == 'D'}">
+                        <td><span class="badge bg-success">Directo</span></td>
+                        <td th:text="${c.piezaCalzado}"></td>
+                        <td th:text="${c.material.codigo + ' - ' + c.material.descripcion}"></td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(c.cantidadConsumo, 1, 4)}"></td>
+                    </tr>
+                    <tr th:each="c : ${bom.consumos}" th:if="${c.material.tipoMaterial == 'I'}">
+                        <td><span class="badge bg-warning text-dark">Indirecto</span></td>
+                        <td th:text="${c.piezaCalzado}"></td>
+                        <td th:text="${c.material.codigo + ' - ' + c.material.descripcion}"></td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(c.cantidadConsumo, 1, 4)}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">
+                <i class="fas fa-print me-1"></i> Imprimir
+            </button>
+        </div>
+    </th:block>
+</body>
+
+</html>

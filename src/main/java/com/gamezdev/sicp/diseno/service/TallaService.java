@@ -1,7 +1,6 @@
 package com.gamezdev.sicp.diseno.service;
 
 import com.gamezdev.sicp.common.dto.OpcionDto;
-import com.gamezdev.sicp.diseno.dto.TallaOpcionDto;
 import com.gamezdev.sicp.diseno.entity.Talla;
 import com.gamezdev.sicp.diseno.repository.TallaRepository;
 import com.gamezdev.sicp.security.service.AuditoriaService;
@@ -108,19 +107,24 @@ public class TallaService {
 
     // Dentro de TallaService, agregar:
 
-    @SuppressWarnings("null")
     @Transactional(readOnly = true)
     public List<OpcionDto> buscarActivasParaCombo(String q) {
-        var pageable = PageRequest.of(0, 20, Sort.by("puntoInicial"));
-        return repository.findByDescripcionContainingIgnoreCase(q == null ? "" : q.trim(), pageable)
-                .stream().filter(Talla::isActivo)
-                .map(t -> new OpcionDto(t.getId(), t.getDescripcion())).toList();
+        String filtro = q == null ? "" : q.trim().toLowerCase();
+        return repository.findByEstatusOrderByPuntoInicialAsc(1).stream()
+                .filter(t -> filtro.isEmpty() || etiqueta(t).toLowerCase().contains(filtro))
+                .limit(20)
+                .map(t -> new OpcionDto(t.getId(), etiqueta(t)))
+                .toList();
     }
 
-    private String formatPunto(java.math.BigDecimal v) {
-        if (v == null)
-            return "";
-        java.math.BigDecimal n = v.stripTrailingZeros();
-        return n.scale() <= 0 ? n.toPlainString() : n.toPlainString();
+    public static String formatPunto(BigDecimal v) {
+        return v == null ? "" : v.stripTrailingZeros().toPlainString();
+    }
+
+    /** Texto visible de una talla: "92 - 22 - 26.5". */
+    public static String etiqueta(Talla t) {
+        return t.getDescripcion() + " - "
+                + formatPunto(t.getPuntoInicial()) + " - "
+                + formatPunto(t.getPuntoFinal());
     }
 }

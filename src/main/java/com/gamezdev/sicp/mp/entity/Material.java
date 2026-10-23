@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.gamezdev.sicp.diseno.entity.Talla;
 import com.gamezdev.sicp.diseno.entity.UnidadMedida;
 
 import jakarta.persistence.Column;
@@ -61,6 +62,21 @@ public class Material {
     @JdbcTypeCode(SqlTypes.TINYINT)
     @Column(nullable = false)
     private Integer estatus = 1;
+
+    /** 1 = el material se maneja por talla, 0 = no. */
+    @JdbcTypeCode(SqlTypes.TINYINT)
+    @Column(name = "maneja_talla", nullable = false)
+    private Integer manejaTalla = 0;
+
+    /** Solo tiene valor cuando manejaTalla = 1. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_talla",
+            foreignKey = @ForeignKey(name = "fk_materiales_talla"))
+    private Talla talla;
+
+    public boolean isConTalla() {
+        return manejaTalla != null && manejaTalla == 1;
+    }
 
     public boolean isActivo() {
         return estatus != null && estatus == 1;

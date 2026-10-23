@@ -138,24 +138,24 @@
         </div>
       </div>
       <div class="tab-pane fade" id="pane-2" role="tabpanel"
-        th:if="${@permisos.tieneAlguno('CONSUMOS_VER','FICHAS_TECNICAS_VER','FICHAS_COSTOS_VER','MODELOS_VER', 'MARCAS_VER','LINEAS_VER','TALLAS_VER','COLORES_VER','HORMAS_VER','COMBINACIONES_VER', 'UNIDADES_VER')}">
+        th:if="${@permisos.tieneAlguno('BOM_VER','FICHAS_TECNICAS_VER','FICHAS_COSTOS_VER','MODELOS_VER', 'MARCAS_VER','LINEAS_VER','TALLAS_VER','COLORES_VER','HORMAS_VER','COMBINACIONES_VER', 'UNIDADES_VER')}">
 
         <!-- UN SOLO contenedor ribbon-groups -->
         <div class="ribbon-groups">
 
           <div class="ribbon-group"
-            th:if="${@permisos.tieneAlguno('FICHAS_TECNICAS_VER','FICHAS_COSTOS_VER','CONSUMOS_VER')}">
+            th:if="${@permisos.tieneAlguno('FICHAS_TECNICAS_VER','FICHAS_COSTOS_VER','BOM_VER')}">
             <div class="ribbon-group-items">
-              <a th:if="${@permisos.tiene('FICHAS_TECNICAS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
-                title="Próximamente"><i class="fas fa-clipboard-list ribbon-icon-cyan"></i><span>Fichas
-                  técnicas</span></a>
+              <a th:if="${@permisos.tiene('FICHAS_TECNICAS_VER')}" th:href="@{/diseno/fichas-tecnicas}"
+                class="ribbon-btn">
+                <i class="fas fa-clipboard-list ribbon-icon-cyan"></i><span>Fichas técnicas</span></a>
               <a th:if="${@permisos.tiene('FICHAS_COSTOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
                 title="Próximamente"><i class="fas fa-calculator ribbon-icon-yellow"></i><span>Fichas de
                   costos</span></a>
-                  <a th:if="${@permisos.tiene('CONSUMOS_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
-                title="Próximamente"><i class="fas fa-calculator ribbon-icon-yellow"></i><span>Consumos</span></a>
+              <a th:if="${@permisos.tiene('BOM_VER')}" th:href="@{/diseno/bom}" class="ribbon-btn">
+                <i class="fas fa-calculator ribbon-icon-yellow"></i><span>Consumos</span></a>
             </div>
-            <div class="ribbon-group-label">Fichas y consumos</div>
+            <div class="ribbon-group-label">Fichas y Consumos</div>
           </div>
 
           <div class="ribbon-group"
@@ -270,8 +270,9 @@
           <div class="ribbon-group"
             th:if="${@permisos.tieneAlguno('ALMACENES_MP_VER','MATERIALES_VER','COMPRAS_VER','PROVEEDORES_VER')}">
             <div class="ribbon-group-items">
-              <a th:if="${@permisos.tiene('ALMACENES_MP_VER')}" href="#" class="ribbon-btn ribbon-btn-pendiente"
-                title="Próximamente"><i class="fas fa-warehouse ribbon-icon-dark"></i><span>Almacenes</span></a>
+              <a th:if="${@permisos.tiene('ALMACENES_MP_VER')}" th:href="@{/mp/almacenes}" class="ribbon-btn">
+                <i class="fas fa-warehouse ribbon-icon-dark"></i><span>Almacenes</span>
+              </a>
               <a th:if="${@permisos.tiene('MATERIALES_VER')}" th:href="@{/mp/materiales}" class="ribbon-btn">
                 <i class="fas fa-boxes-packing ribbon-icon-blue"></i>
                 <span>Materiales</span>

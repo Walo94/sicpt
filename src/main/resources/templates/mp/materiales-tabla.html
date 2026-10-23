@@ -50,6 +50,7 @@
                             <i class="fas sort-icon"
                                 th:classappend="${sort == 'tipoMaterial'} ? (${dir == 'asc'} ? 'fa-sort-up active' : 'fa-sort-down active') : 'fa-sort'"></i>
                         </th>
+                        <th style="width: 110px">Talla</th>
                     </tr>
                 </thead>
                 <tbody id="tablaBody">
@@ -76,6 +77,14 @@
                             <span class="badge-tipo"
                                 th:classappend="${d.tipoMaterial == 'D'} ? 'badge-tipo-directo' : 'badge-tipo-indirecto'"
                                 th:text="${d.tipoMaterialTexto}"></span>
+                        </td>
+                        <td>
+                            <span  th:if="${d.conTalla}">
+                                <span th:text="${d.talla.descripcion}">94</span>
+                                <span
+                                    th:text="'(' + ${@fmt.punto(d.talla.puntoInicial)} + ' - ' + ${@fmt.punto(d.talla.puntoFinal)} + ')'"></span>
+                            </span>
+                            <span class="text-muted small" th:unless="${d.conTalla}">—</span>
                         </td>
                     </tr>
                     <tr th:if="${pagina.empty}">

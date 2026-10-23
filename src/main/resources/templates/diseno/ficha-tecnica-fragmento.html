@@ -1,0 +1,130 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <!-- Fragmento que pinta la ficha de UN modelo -->
+  <th:block th:fragment="fichaTabla(m, bomObj)">
+    <table class="ficha-tabla mb-4">
+      <!-- Encabezado -->
+      <tr>
+        <th colspan="3" class="text-center" style="font-size: 16px;">SISTEMA INTEGRAL DE CONTROL DE PRODUCCIÓN</th>
+      </tr>
+      <tr>
+        <th colspan="3" class="text-center" style="font-size: 14px;" th:text="${m.marca.descripcion}">MARCA</th>
+      </tr>
+      <tr>
+        <td class="bg-gray text-center" style="width: 25%;">Ficha Técnica</td>
+        <td class="text-center" style="width: 50%;" th:text="${'LÍNEA: ' + m.linea.descripcion}">LÍNEA</td>
+        <td class="text-center" style="width: 25%;" th:text="${'Ficha N: ' + m.codigoModelo}">Ficha N:001</td>
+      </tr>
+
+      <!-- Cuerpo: Datos y Foto -->
+      <tr>
+        <td colspan="2">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Material:</strong> <span
+                  th:text="${m.materialCorte}"></span></td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Forro:</strong> <span th:text="${m.forro}"></span></td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Plantilla:</strong> <span th:text="${m.plantilla}"></span>
+              </td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Color:</strong> <span th:text="${m.colorPrincipal}"></span>
+              </td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Estilo:</strong> <span th:text="${m.estilo}"></span></td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Suela:</strong> <span th:text="${m.suela}"></span></td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Cordones:</strong> <span th:text="${m.cordones}"></span>
+              </td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Contrafuerte:</strong> <span
+                  th:text="${m.contrafuerte}"></span></td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Cuello:</strong> <span th:text="${m.cuello}"></span></td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Lengüeta:</strong> <span th:text="${m.lengueta}"></span>
+              </td>
+            </tr>
+            <tr>
+              <td style="border:none; padding:2px;"><strong>Ojales:</strong> <span th:text="${m.ojales}"></span></td>
+            </tr>
+          </table>
+        </td>
+        <!-- En ficha-tecnica-fragmento.html -->
+        <td class="text-center" style="width: 50%;">
+          <img th:if="${m.imagenUrl != null}" th:src="@{${m.imagenUrl}}" alt="Imagen del zapato"
+            style="max-width: 100%; max-height: 250px; object-fit: contain;">
+          <div th:if="${m.imagenUrl == null}" class="text-muted" style="padding-top: 50px;">Sin imagen</div>
+        </td>
+      </tr>
+
+      <!-- Vida Útil -->
+      <tr>
+        <td class="text-center"><strong>Vida Útil:</strong></td>
+        <td colspan="2" th:text="${m.vidaUtil}"></td>
+      </tr>
+
+      <!-- Tallas -->
+      <tr>
+        <td class="text-center bg-gray"><strong>Tallas Disponibles:</strong></td>
+        <td colspan="2" class="text-center" th:text="${m.tallasDisponibles}"></td>
+      </tr>
+
+      <!-- Observaciones y Recomendaciones -->
+      <tr>
+        <td colspan="3">
+          <p class="mb-1"><strong>Observaciones:</strong> <span th:text="${m.observaciones}"></span></p>
+          <p class="mb-1"><strong>Recomendaciones:</strong> <span th:text="${m.recomendaciones}"></span></p>
+          <p class="mb-0"><strong>Almacenamiento:</strong> <span th:text="${m.almacenamiento}"></span></p>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Sección BOM -->
+    <h6 class="text-primary mt-4 mb-2" th:if="${bomObj != null}">ESTRUCTURA DE MATERIALES (BOM) - Versión v<span
+        th:text="${bomObj.version}"></span></h6>
+    <div th:if="${bomObj == null}" class="alert alert-warning py-2">
+      Este modelo aún no tiene una Estructura de Materiales (BOM) registrada.
+    </div>
+
+    <table th:if="${bomObj != null}" class="table table-bordered table-sm" style="font-size: 12px;">
+      <thead class="table-light">
+        <tr>
+          <th>Tipo</th>
+          <th>Pieza</th>
+          <th>Material</th>
+          <th class="text-end">Consumo (x par)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="c : ${bomObj.consumos}" th:if="${c.material.tipoMaterial == 'D'}">
+          <td><span class="badge bg-success">Directo</span></td>
+          <td th:text="${c.piezaCalzado}"></td>
+          <td th:text="${c.material.codigo + ' - ' + c.material.descripcion}"></td>
+          <td class="text-end" th:text="${#numbers.formatDecimal(c.cantidadConsumo, 1, 4)}"></td>
+        </tr>
+        <tr th:each="c : ${bomObj.consumos}" th:if="${c.material.tipoMaterial == 'I'}">
+          <td><span class="badge bg-warning text-dark">Indirecto</span></td>
+          <td th:text="${c.piezaCalzado}"></td>
+          <td th:text="${c.material.codigo + ' - ' + c.material.descripcion}"></td>
+          <td class="text-end" th:text="${#numbers.formatDecimal(c.cantidadConsumo, 1, 4)}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </th:block>
+</body>
+
+</html>

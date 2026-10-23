@@ -44,4 +44,13 @@ public class MaterialForm {
     @NotBlank(message = "El tipo de material es obligatorio.")
     @Pattern(regexp = "^[DI]$", message = "El tipo debe ser D (Directo) o I (Indirecto).")
     private String tipoMaterial;
+
+    /** Checkbox "¿Maneja talla?" */
+    private boolean manejaTalla;
+
+    /** Talla elegida en el combo (solo aplica si manejaTalla = true). */
+    private Integer tallaId;
+
+    /** Texto visible en el combo de talla. */
+    private String tallaTexto;
 }

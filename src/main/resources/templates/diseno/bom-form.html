@@ -1,0 +1,102 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <th:block th:fragment="formulario">
+    <div class="modal-header modal-header-custom">
+      <h5 class="modal-title">
+        <i class="fas fa-layer-group me-2"></i>
+        <span th:text="${form.id == null} ? 'Nuevo BOM' : 'Editar BOM'">Nuevo BOM</span>
+      </h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    </div>
+
+    <form th:object="${form}"
+      th:attr="hx-post=${form.id == null} ? @{/diseno/bom} : @{/diseno/bom/{id}(id=${form.id})}"
+      th:data-editando="${form.id != null}"
+      hx-target="#modalContent" hx-swap="innerHTML" novalidate autocomplete="off" id="formBom">
+
+      <div class="modal-body" style="max-height: calc(100vh - 200px); display: flex; flex-direction: column;">
+        <!-- Encabezado -->
+        <div class="row g-3 mb-4 flex-shrink-0">
+          <div class="col-md-6">
+            <label for="modeloBuscar" class="form-label">Modelo <span class="text-danger">*</span></label>
+            <div class="combo-busqueda" id="modeloCombo" data-url="/diseno/modelos/opciones"
+              th:style="${form.id != null} ? 'pointer-events: none;' : ''">
+              <input type="text" class="form-control" id="modeloBuscar" placeholder="Escribe código o descripción..."
+                autocomplete="off" th:value="${form.modeloTexto}" th:readonly="${form.id != null}"
+                th:classappend="${form.id != null} ? 'bg-light'" th:attr="tabindex=${form.id != null} ? '-1' : null" />
+              <input type="hidden" th:field="*{modeloId}" id="modeloId" />
+              <div class="combo-busqueda-dropdown" id="modeloDropdown"></div>
+            </div>
+            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('modeloId')}" th:errors="*{modeloId}">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <label for="version" class="form-label">Versión <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" th:field="*{version}" th:errorclass="is-invalid" min="1"
+              th:readonly="${form.id != null}" th:classappend="${form.id != null} ? 'bg-light'"
+              th:attr="tabindex=${form.id != null} ? '-1' : null" />
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('version')}" th:errors="*{version}"></div>
+          </div>
+          <div class="col-md-4">
+            <label for="descripcion" class="form-label">Descripción / Notas</label>
+            <input type="text" class="form-control" th:field="*{descripcion}" maxlength="150"
+              placeholder="Ej: Costeo inicial..." />
+          </div>
+        </div>
+
+        <!-- Detalle Dinámico -->
+        <div class="d-flex justify-content-between align-items-center mb-2 flex-shrink-0">
+          <h6 class="mb-0 text-primary"><i class="fas fa-boxes-packing me-1"></i> Materiales Consumidos</h6>
+          <button type="button" class="btn btn-outline-success btn-sm" id="btnAddMaterial">
+            <i class="fas fa-plus me-1"></i> Agregar Material
+          </button>
+        </div>
+
+        <div class="text-danger small mb-2" th:if="${#fields.hasErrors('consumos')}" th:errors="*{consumos}"></div>
+
+        <div class="table-responsive border rounded" style="max-height: 350px; overflow-y: auto; flex-grow: 1;">
+          <table class="table table-sm table-hover mb-0" id="tablaConsumos">
+            <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+              <tr>
+                <th style="width: 30%;">Pieza del Calzado</th>
+                <th style="width: 45%;">Material</th>
+                <th style="width: 20%;">Cantidad (por par)</th>
+                <th style="width: 5%;"></th>
+              </tr>
+            </thead>
+            <tbody id="consumosBody">
+              <!-- Filas generadas por JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i> Cancelar
+        </button>
+        <button type="submit" class="btn btn-success btn-sm">
+          <i class="fas fa-save me-1"></i> Guardar BOM
+        </button>
+      </div>
+    </form>
+
+    <!-- Script específico del modal inyectado por HTMX -->
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      (function () {
+        const consumos = /*[[${form.consumos}]]*/[];
+        const hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.id = 'consumosJson';
+        hidden.value = JSON.stringify(consumos);
+        document.getElementById('formBom').appendChild(hidden);
+      })();
+      /*]]>*/
+    </script>
+  </th:block>
+</body>
+
+</html>

@@ -167,7 +167,7 @@ public class TallaController {
 
     // Buscar tallas activas para el combo
     @GetMapping("/opciones")
-    @PreAuthorize("hasAuthority('TALLAS_VER')")
+    @PreAuthorize("hasAnyAuthority('TALLAS_VER','MATERIALES_CREAR','MATERIALES_EDITAR')")
     @ResponseBody
     public List<OpcionDto> opciones(@RequestParam(defaultValue = "") String q) {
         return service.buscarActivasParaCombo(q);
