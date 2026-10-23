@@ -1,5 +1,10 @@
 package com.gamezdev.sicp.diseno.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -7,10 +12,12 @@ import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gamezdev.sicp.common.dto.OpcionDto;
+import com.gamezdev.sicp.diseno.dto.ModeloForm;
 import com.gamezdev.sicp.diseno.entity.Horma;
 import com.gamezdev.sicp.diseno.entity.Linea;
 import com.gamezdev.sicp.diseno.entity.Marca;
@@ -35,6 +42,9 @@ public class ModeloService {
     private final LineaRepository lineaRepository;
     private final HormaRepository hormaRepository;
     private final AuditoriaService auditoria;
+
+    @Value("${app.upload-dir:uploads}")
+    private String uploadDir;
 
     public static class DuplicadoException extends RuntimeException {
         public DuplicadoException(String msg) {
@@ -63,36 +73,82 @@ public class ModeloService {
     }
 
     @Transactional
-    public Modelo crear(String codigoModelo, String descripcion,
-            Integer marcaId, Integer lineaId, Integer hormaId) {
+    public Modelo crear(ModeloForm form) {
+        String cod = form.getCodigoModelo().trim().toUpperCase();
+        String desc = form.getDescripcion().trim();
 
-        String cod = codigoModelo.trim().toUpperCase();
-        String desc = descripcion.trim();
-
-        if (repository.existsByCodigoModeloIgnoreCase(cod)) {
-            throw new DuplicadoException("Ya existe un modelo con este código.");
+        Modelo m;
+        if (form.getId() == null) {
+            if (repository.existsByCodigoModeloIgnoreCase(cod)) {
+                throw new DuplicadoException("Ya existe un modelo con este código.");
+            }
+            m = new Modelo();
+            m.setEstatus(1);
+        } else {
+            m = repository.findById(form.getId()).orElseThrow();
+            if (repository.existsByCodigoModeloIgnoreCaseAndIdNot(cod, form.getId())) {
+                throw new DuplicadoException("Ya existe un modelo con este código.");
+            }
         }
 
-        Marca marca = marcaRepository.findById(marcaId)
-                .filter(Marca::isActivo)
+        Marca marca = marcaRepository.findById(form.getMarcaId()).filter(Marca::isActivo)
                 .orElseThrow(() -> new ReferenciaInvalidaException("La marca seleccionada no existe o está inactiva."));
-        Linea linea = lineaRepository.findById(lineaId)
-                .filter(Linea::isActivo)
+        Linea linea = lineaRepository.findById(form.getLineaId()).filter(Linea::isActivo)
                 .orElseThrow(() -> new ReferenciaInvalidaException("La línea seleccionada no existe o está inactiva."));
-        Horma horma = hormaRepository.findById(hormaId)
-                .filter(Horma::isActivo)
+        Horma horma = hormaRepository.findById(form.getHormaId()).filter(Horma::isActivo)
                 .orElseThrow(() -> new ReferenciaInvalidaException("La horma seleccionada no existe o está inactiva."));
 
-        Modelo m = new Modelo();
         m.setCodigoModelo(cod);
         m.setDescripcion(desc);
         m.setMarca(marca);
         m.setLinea(linea);
         m.setHorma(horma);
-        m.setEstatus(1);
+
+        // Mapear nuevos campos
+        m.setMaterialCorte(form.getMaterialCorte());
+        m.setForro(form.getForro());
+        m.setPlantilla(form.getPlantilla());
+        m.setSuela(form.getSuela());
+        m.setColorPrincipal(form.getColorPrincipal());
+        m.setEstilo(form.getEstilo());
+        m.setCordones(form.getCordones());
+        m.setContrafuerte(form.getContrafuerte());
+        m.setCuello(form.getCuello());
+        m.setLengueta(form.getLengueta());
+        m.setOjales(form.getOjales());
+        m.setVidaUtil(form.getVidaUtil());
+        m.setTallasDisponibles(form.getTallasDisponibles());
+        m.setObservaciones(form.getObservaciones());
+        m.setRecomendaciones(form.getRecomendaciones());
+        m.setAlmacenamiento(form.getAlmacenamiento());
+
+        // Manejo de Imagen
+        if (form.getImagenFile() != null && !form.getImagenFile().isEmpty()) {
+            try {
+                // Creamos la carpeta si no existe
+                Path uploadPath = Paths.get(uploadDir, "modelos");
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                // Nombre único para evitar sobreescribir: timestamp_nombreOriginal
+                String nombreArchivo = System.currentTimeMillis() + "_"
+                        + form.getImagenFile().getOriginalFilename().replaceAll("\\s+", "_");
+                Path rutaDestino = uploadPath.resolve(nombreArchivo);
+
+                Files.copy(form.getImagenFile().getInputStream(), rutaDestino, StandardCopyOption.REPLACE_EXISTING);
+
+                // Guardamos la ruta relativa en la BD
+                m.setImagenUrl("/uploads/modelos/" + nombreArchivo);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error al guardar la imagen: " + e.getMessage());
+            }
+        }
+
         m = repository.save(m);
-        auditoria.registrar("CREAR", "DISENO", "modelos", m.getId(),
-                "Código: " + cod + " - " + desc);
+        auditoria.registrar(form.getId() == null ? "CREAR" : "EDITAR", "DISENO", "modelos", m.getId(),
+                "Código: " + cod);
         return m;
     }
 

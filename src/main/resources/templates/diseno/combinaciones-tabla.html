@@ -56,13 +56,13 @@
                             <span class="ms-1" th:text="${d.modelo.descripcion}">FLEXI RUNNER</span>
                         </td>
                         <td>
-                            <span class="badge-talla">
+                            <span>
                                 <span th:text="${d.talla.descripcion}">94</span>
                                 <span
                                     th:text="'(' + ${@fmt.punto(d.talla.puntoInicial)} + ' - ' + ${@fmt.punto(d.talla.puntoFinal)} + ')'"></span>
                             </span>
                         </td>
-                        <td><span class="badge-unidad" th:text="${d.unidadVenta.codigo}">PAR</span></td>
+                        <td><span th:text="${d.unidadVenta.codigo}">PAR</span></td>
                         <td th:text="${'$' + #numbers.formatDecimal(d.precioVentaBase, 1, 2)}"></td>
                     </tr>
                     <tr th:if="${pagina.empty}">

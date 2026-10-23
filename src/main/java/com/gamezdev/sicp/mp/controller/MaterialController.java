@@ -1,15 +1,20 @@
 package com.gamezdev.sicp.mp.controller;
 
 import com.gamezdev.sicp.common.util.HtmxResponse;
+import com.gamezdev.sicp.diseno.service.TallaService;
 import com.gamezdev.sicp.diseno.service.UnidadService;
 import com.gamezdev.sicp.mp.dto.MaterialForm;
 import com.gamezdev.sicp.mp.entity.Material;
 import com.gamezdev.sicp.mp.service.MaterialService;
 import com.gamezdev.sicp.mp.service.MaterialService.DuplicadoException;
 import com.gamezdev.sicp.mp.service.MaterialService.UnidadInvalidaException;
+import com.gamezdev.sicp.mp.service.MaterialService.TallaInvalidaException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +36,7 @@ public class MaterialController {
 
     private final MaterialService service;
     private final UnidadService unidadService;
+    private final TallaService tallaService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('MATERIALES_VER')")
@@ -65,6 +71,15 @@ public class MaterialController {
         form.setUnidadConsumoTexto(label(m.getUnidadConsumo().getCodigo(), m.getUnidadConsumo().getDescripcion()));
         form.setFactorConversion(m.getFactorConversion());
         form.setTipoMaterial(m.getTipoMaterial());
+        form.setManejaTalla(m.isConTalla());
+        if (m.isConTalla() && m.getTalla() != null) {
+            form.setTallaId(m.getTalla().getId());
+            form.setTallaTexto(TallaService.etiqueta(m.getTalla()));
+        }
+        if (m.isConTalla() && m.getTalla() != null) {
+            form.setTallaId(m.getTalla().getId());
+            form.setTallaTexto(m.getTalla().getDescripcion());
+        }
         model.addAttribute("form", form);
         return FORM;
     }
@@ -82,7 +97,8 @@ public class MaterialController {
             try {
                 service.crear(form.getCodigo(), form.getDescripcion(),
                         form.getUnidadCompraId(), form.getUnidadConsumoId(),
-                        form.getFactorConversion(), form.getTipoMaterial());
+                        form.getFactorConversion(), form.getTipoMaterial(),
+                        form.isManejaTalla(), form.getTallaId());
             } catch (DuplicadoException e) {
                 br.rejectValue("codigo", "duplicado", e.getMessage());
             } catch (UnidadInvalidaException e) {
@@ -94,6 +110,8 @@ public class MaterialController {
                 } else {
                     br.rejectValue("factorConversion", "factorInvalido", e.getMessage());
                 }
+            } catch (TallaInvalidaException e) {
+                br.rejectValue("tallaId", "tallaInvalida", e.getMessage());
             }
         }
         if (br.hasErrors()) {
@@ -121,7 +139,8 @@ public class MaterialController {
             try {
                 service.actualizar(id, form.getCodigo(), form.getDescripcion(),
                         form.getUnidadCompraId(), form.getUnidadConsumoId(),
-                        form.getFactorConversion(), form.getTipoMaterial());
+                        form.getFactorConversion(), form.getTipoMaterial(),
+                        form.isManejaTalla(), form.getTallaId());
             } catch (DuplicadoException e) {
                 br.rejectValue("codigo", "duplicado", e.getMessage());
             } catch (UnidadInvalidaException e) {
@@ -132,6 +151,8 @@ public class MaterialController {
                 } else {
                     br.rejectValue("factorConversion", "factorInvalido", e.getMessage());
                 }
+            } catch (TallaInvalidaException e) {
+                br.rejectValue("tallaId", "tallaInvalida", e.getMessage());
             }
         }
         if (br.hasErrors()) {
@@ -166,12 +187,20 @@ public class MaterialController {
 
     private void refrescarLabels(MaterialForm form) {
         if (form.getUnidadCompraId() != null) {
-            unidadService.obtener(form.getUnidadCompraId()).ifPresent(u ->
-                    form.setUnidadCompraTexto(label(u.getCodigo(), u.getDescripcion())));
+            unidadService.obtener(form.getUnidadCompraId())
+                    .ifPresent(u -> form.setUnidadCompraTexto(label(u.getCodigo(), u.getDescripcion())));
         }
         if (form.getUnidadConsumoId() != null) {
-            unidadService.obtener(form.getUnidadConsumoId()).ifPresent(u ->
-                    form.setUnidadConsumoTexto(label(u.getCodigo(), u.getDescripcion())));
+            unidadService.obtener(form.getUnidadConsumoId())
+                    .ifPresent(u -> form.setUnidadConsumoTexto(label(u.getCodigo(), u.getDescripcion())));
+        }
+
+        if (!form.isManejaTalla()) {
+            form.setTallaId(null);
+            form.setTallaTexto(null);
+        } else if (form.getTallaId() != null) {
+            tallaService.obtener(form.getTallaId())
+                    .ifPresent(t -> form.setTallaTexto(TallaService.etiqueta(t)));
         }
     }
 
@@ -200,5 +229,13 @@ public class MaterialController {
         model.addAttribute("baseUrl", "/mp/materiales");
         model.addAttribute("qsQ", qsQ);
         model.addAttribute("qsSort", qsSort);
+    }
+
+    @GetMapping("/opciones")
+    @PreAuthorize("hasAnyAuthority('MATERIALES_VER','BOM_VER','BOM_CREAR','BOM_EDITAR')")
+    @ResponseBody
+    public List<com.gamezdev.sicp.common.dto.OpcionDto> opciones(
+            @RequestParam(defaultValue = "") String q) {
+        return service.buscarActivasParaCombo(q);
     }
 }

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <th:block th:replace="~{fragments/head :: headComun('Fichas Técnicas')}"></th:block>
+</head>
+
+<body>
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+  <div class="container-fluid mt-3 px-4">
+    <div class="catalogos-header">
+      <h2 class="catalogos-title">
+        <i class="fas fa-clipboard-list ribbon-icon-cyan me-2"></i> Fichas Técnicas
+      </h2>
+      <div>
+        <!-- Botón para imprimir todas las fichas (HTMX Modal) -->
+        <button class="btn btn-outline-primary btn-sm me-2" hx-get="/diseno/fichas-tecnicas/reporte-masivo"
+          hx-target="#printHost" hx-swap="innerHTML">
+          <i class="fas fa-print me-1"></i> Imprimir Todas las Fichas
+        </button>
+      </div>
+    </div>
+
+    <div class="catalogos-toolbar">
+      <div class="input-group input-group-sm" style="max-width: 350px">
+        <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+        <input type="search" class="form-control" placeholder="Buscar modelo..." />
+      </div>
+    </div>
+
+    <div class="table-responsive catalogos-tabla-wrapper">
+      <table class="table table-sm table-hover catalogos-tabla mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Marca</th>
+            <th>Línea</th>
+            <th>Horma</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="m : ${pagina.content}">
+            <td th:text="${m.id}"></td>
+            <td><span class="badge-codigo" th:text="${m.codigoModelo}"></span></td>
+            <td th:text="${m.descripcion}"></td>
+            <td th:text="${m.marca.descripcion}"></td>
+            <td th:text="${m.linea.descripcion}"></td>
+            <td>
+              <span class="badge-codigo" th:text="${m.horma.claveHorma}"></span>
+            </td>
+            <td class="text-center">
+              <!-- Botón que abre el modal con HTMX -->
+              <button class="btn btn-sm btn-info text-white"
+                th:attr="hx-get=@{/diseno/fichas-tecnicas/{id}(id=${m.id})}" hx-target="#printHost" hx-swap="innerHTML">
+                <i class="fas fa-print"></i> Imprimir Ficha
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+   <div id="printHost" hidden></div>
+
+  <th:block th:replace="~{fragments/scripts-catalogos :: scriptsCatalogos}"></th:block>
+
+  <!-- Incluir el script de impresión del modal -->
+  <th:block th:replace="~{fragments/scripts-catalogos :: scriptsCatalogos}"></th:block>
+  <script th:src="@{/js/ficha-impresion.js}"></script>
+</body>
+
+</html>
